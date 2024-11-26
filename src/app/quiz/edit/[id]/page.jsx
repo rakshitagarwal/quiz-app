@@ -1,0 +1,25 @@
+import EditQuizForm from '../../../../components/Tables/QuizEdit'
+
+const getQuizById = async (id) => {
+  try {
+    const res = await fetch(`http://localhost:3000/api/temp/${id}`, {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch topic");
+    }
+
+    return res.json();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export default async function EditQuiz({ params }) {
+  const { id } = params;
+  const { quiz } = await getQuizById(id);
+  const { title, description, questions } = quiz;
+
+  return <EditQuizForm id={id} title={title} description={description} questions={questions} />;
+}
