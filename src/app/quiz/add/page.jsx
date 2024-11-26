@@ -5,13 +5,12 @@ import { useRouter } from "next/navigation";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
 export default function AddQuiz() {
+    const router = useRouter();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [questions, setQuestions] = useState([
         { questionText: "", type: "Multiple Choice", options: [{ text: "", isCorrect: false }] },
     ]);
-
-    const router = useRouter();
 
     const handleAddQuestion = () => {
         setQuestions([
@@ -24,21 +23,53 @@ export default function AddQuiz() {
         setQuestions(questions.filter((_, i) => i !== index));
     };
 
+    // const handleQuestionChange = (index, field, value) => {
+    //     const updatedQuestions = [...questions];
+    //     updatedQuestions[index][field] = value;
+
+    //     if (field === "type" && value !== "Multiple Choice") {
+    //         updatedQuestions[index].options = []; // Clear options if not MCQ
+    //     }
+    //     setQuestions(updatedQuestions);
+    // };
+
     const handleQuestionChange = (index, field, value) => {
         const updatedQuestions = [...questions];
         updatedQuestions[index][field] = value;
-
-        if (field === "type" && value !== "Multiple Choice") {
-            updatedQuestions[index].options = []; // Clear options if not MCQ
+    
+        if (field === "type") {
+            if (value === "Multiple Choice") {
+                updatedQuestions[index].options = [{ text: "", isCorrect: false }];
+            } else if (value === "True/False") {
+                updatedQuestions[index].options = [
+                    { text: "True", isCorrect: false },
+                    { text: "False", isCorrect: false },
+                ];
+            } else {
+                updatedQuestions[index].options = []; // Clear options for Short Answer
+            }
         }
         setQuestions(updatedQuestions);
     };
+    
+
+    // const handleOptionChange = (qIndex, oIndex, field, value) => {
+    //     const updatedQuestions = [...questions];
+    //     updatedQuestions[qIndex].options[oIndex][field] = value;
+    //     setQuestions(updatedQuestions);
+    // };
 
     const handleOptionChange = (qIndex, oIndex, field, value) => {
         const updatedQuestions = [...questions];
-        updatedQuestions[qIndex].options[oIndex][field] = value;
+        if (field === "isCorrect" && value === true) {
+            updatedQuestions[qIndex].options.forEach((option, index) => {
+                option.isCorrect = index === oIndex;
+            });
+        } else {
+            updatedQuestions[qIndex].options[oIndex][field] = value;
+        }
         setQuestions(updatedQuestions);
-    };
+    }; 
 
     const handleAddOption = (qIndex) => {
         const updatedQuestions = [...questions];
@@ -55,8 +86,21 @@ export default function AddQuiz() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!title || questions.length === 0) {
-            alert("Title and at least one question are required.");
+        if (!title.trim()) {
+            alert("Quiz title is required.");
+            return;
+        }
+    
+        if (questions.some(q => !q.questionText.trim())) {
+            alert("All questions must have text.");
+            return;
+        }
+    
+        if (
+            questions.some(q => q.type === "Multiple Choice" && 
+                (q.options.length < 2 || !q.options.some(o => o.isCorrect)))
+        ) {
+            alert("Multiple Choice questions must have at least two options and one correct answer.");
             return;
         }
 
@@ -141,12 +185,17 @@ export default function AddQuiz() {
                                                 onChange={(e) => handleOptionChange(qIndex, oIndex, "text", e.target.value)}
                                                 className="flex-grow rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                                             />
-                                            <input
-                                                type="checkbox"
-                                                checked={option.isCorrect}
-                                                onChange={(e) => handleOptionChange(qIndex, oIndex, "isCorrect", e.target.checked)}
-                                                className="w-5 h-5"
-                                            />
+                                            <div className="flex items-center gap-2">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={option.isCorrect}
+                                                    onChange={(e) => handleOptionChange(qIndex, oIndex, "isCorrect", e.target.checked)}
+                                                    className="w-5 h-5"
+                                                />
+                                                <span className={option.isCorrect ? "text-green-600" : "text-gray-500"}>
+                                                    Mark as Correct
+                                                </span>
+                                            </div>
                                             <button
                                                 type="button"
                                                 onClick={() => handleRemoveOption(qIndex, oIndex)}
