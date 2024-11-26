@@ -3,7 +3,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
 const getQuizById = async (id) => {
   try {
-    const res = await fetch(`http://localhost:3000/api/temp/${id}`, {
+    const res = await fetch(`http://localhost:3000/api/quiz/${id}`, {
       cache: "no-store",
     });
 

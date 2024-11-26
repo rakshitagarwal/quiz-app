@@ -55,7 +55,7 @@ export default function EditQuizForm({ id, title, description, questions }) {
     e.preventDefault();
 
     try {
-      const res = await fetch(`http://localhost:3000/api/temp/${id}`, {
+      const res = await fetch(`http://localhost:3000/api/quiz/${id}`, {
         method: "PUT",
         headers: {
           "Content-type": "application/json",

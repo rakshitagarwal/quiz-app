@@ -61,7 +61,7 @@ export default function AddQuiz() {
         }
 
         try {
-            const res = await fetch("http://localhost:3000/api/temp", {
+            const res = await fetch("http://localhost:3000/api/quiz", {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json",

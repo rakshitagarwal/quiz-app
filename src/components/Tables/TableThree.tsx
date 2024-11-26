@@ -1,18 +1,20 @@
-"use client"
+"use client";
 import { Quiz } from "@/types/quiz";
 import { getSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const TableThree = () => {
-  const session = getSession();
-  console.log("session",session);
-  
-  const [quizes, setQuizes] = useState<Quiz[]>([])
+  const [quizes, setQuizes] = useState<Quiz[]>([]);
+
+  const mysession = async () => {
+    const session = await getSession();
+    console.log("session", session);
+  };
 
   const getQuizes = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/temp", {
+      const res = await fetch("http://localhost:3000/api/quiz", {
         cache: "no-store",
       });
 
@@ -20,7 +22,7 @@ const TableThree = () => {
         throw new Error("Failed to fetch topics");
       }
       const { quizes } = await res.json();
-      setQuizes(quizes)
+      setQuizes(quizes);
       return;
     } catch (error) {
       console.log("Error loading topics: ", error);
@@ -29,17 +31,18 @@ const TableThree = () => {
 
   useEffect(() => {
     getQuizes();
-  }, [])
+    mysession();
+  }, []);
 
   const removeQuiz = async (id: string) => {
     const confirmed = confirm("Are you sure?");
     if (confirmed) {
-      const res = await fetch(`http://localhost:3000/api/temp/${id}`, {
+      const res = await fetch(`http://localhost:3000/api/quiz/${id}`, {
         method: "DELETE",
       });
       if (res.ok) {
         await getQuizes();
-      } else console.log("Failed to delete the quiz.");   
+      } else console.log("Failed to delete the quiz.");
     }
   };
 
@@ -70,7 +73,6 @@ const TableThree = () => {
                   <h5 className="font-medium text-black dark:text-white">
                     {quiz.title}
                   </h5>
-
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <p className="text-black dark:text-white">
@@ -78,9 +80,7 @@ const TableThree = () => {
                   </p>
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  <p>
-                    {quiz.questions.length}
-                  </p>
+                  <p>{quiz.questions.length}</p>
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
@@ -105,7 +105,10 @@ const TableThree = () => {
                         </svg>
                       </button>
                     </Link>
-                    <button onClick={() => removeQuiz(quiz._id)} className="hover:text-primary">
+                    <button
+                      onClick={() => removeQuiz(quiz._id)}
+                      className="hover:text-primary"
+                    >
                       <svg
                         className="fill-current"
                         width="18"
