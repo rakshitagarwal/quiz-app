@@ -88,7 +88,7 @@ const TableThree = () => {
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
-                    <button onClick={() => router.push(`/quiz/play/${quiz._id}`)} className="hover:text-primary">
+                    <button onClick={() => router.push(`/quiz/${quiz._id}`)} className="hover:text-primary">
                       <FaEye />
                     </button>
 

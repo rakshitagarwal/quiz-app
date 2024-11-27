@@ -1,4 +1,3 @@
-import { getSession } from 'next-auth/react';
 import EditQuizForm from '../../../../components/Tables/QuizEdit'
 
 const getQuizById = async (id) => {

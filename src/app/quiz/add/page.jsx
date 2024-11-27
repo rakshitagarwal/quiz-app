@@ -134,13 +134,13 @@ export default function AddQuiz() {
                             </div>
                             <div className="mb-4.5">
                                 <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                                    Answers
+                                    Choices
                                 </label>
                                 {question.answers.map((answer, aIndex) => (
                                     <div key={aIndex} className="flex gap-4 items-center mb-2">
                                         <input
                                             type="text"
-                                            placeholder={`Answer ${aIndex + 1}`}
+                                            placeholder={`Choice ${aIndex + 1}`}
                                             value={answer}
                                             onChange={(e) => handleAnswerChange(qIndex, aIndex, e.target.value)}
                                             className="flex-grow rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -160,7 +160,7 @@ export default function AddQuiz() {
                                         onClick={() => handleAddAnswer(qIndex)}
                                         className="text-primary"
                                     >
-                                        Add Answer
+                                        Add Choice
                                     </button>
                                 )}
                             </div>
@@ -171,7 +171,7 @@ export default function AddQuiz() {
                                 <select
                                     value={question.correctAnswer}
                                     onChange={(e) => handleQuestionChange(qIndex, "correctAnswer", e.target.value)}
-                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                                    className="w-fit rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                                 >
                                     <option value="">Select Correct Answer</option>
                                     {question.answers.map((answer, aIndex) => (

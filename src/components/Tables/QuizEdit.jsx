@@ -67,7 +67,7 @@ export default function EditQuizForm({ id, title, description, questions }) {
     }
 
     try {
-        const session = await getSession();
+      const session = await getSession();
       const res = await fetch(`http://localhost:3000/api/quiz/${id}`, {
         method: "PUT",
         headers: {
@@ -134,21 +134,21 @@ export default function EditQuizForm({ id, title, description, questions }) {
               </div>
               <div className="mb-4.5">
                 <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                  Answers
+                  Choices
                 </label>
                 {question.answers.map((answer, aIndex) => (
-                  <div key={aIndex} className="flex gap-4 items-center mb-2">
+                  <div key={aIndex} className="flex w-[50%] items-center mb-2">
                     <input
                       type="text"
                       placeholder={`Answer ${aIndex + 1}`}
                       value={answer}
                       onChange={(e) => handleAnswerChange(qIndex, aIndex, e.target.value)}
-                      className="flex-grow rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      className="flex-grow rounded border-[1.5px] border-stroke bg-transparent px-1 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
                     <button
                       type="button"
                       onClick={() => handleRemoveAnswer(qIndex, aIndex)}
-                      className="text-meta-1"
+                      className="text-meta-1 px-5"
                     >
                       Remove
                     </button>
@@ -160,7 +160,7 @@ export default function EditQuizForm({ id, title, description, questions }) {
                     onClick={() => handleAddAnswer(qIndex)}
                     className="text-primary"
                   >
-                    Add Answer
+                    Add Choice
                   </button>
                 )}
               </div>
@@ -171,7 +171,7 @@ export default function EditQuizForm({ id, title, description, questions }) {
                 <select
                   value={question.correctAnswer}
                   onChange={(e) => handleQuestionChange(qIndex, "correctAnswer", e.target.value)}
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  className="w-fit rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                 >
                   <option value="">Select Correct Answer</option>
                   {question.answers.map((answer, aIndex) => (
@@ -199,12 +199,21 @@ export default function EditQuizForm({ id, title, description, questions }) {
               Add Question
             </button>
           )}
+          <div className="flex">
           <button
             type="submit"
             className="w-32 flex justify-center rounded bg-green-600 p-3 font-medium text-white hover:bg-opacity-90"
           >
             Update Quiz
+          </button>&nbsp;&nbsp;
+          <button
+            type="button"
+            onClick={()=>router.push('/tables')}
+            className="w-32 flex justify-center rounded bg-primary p-3 font-medium text-white hover:bg-opacity-90"
+          >
+            Cancel
           </button>
+          </div>
         </div>
       </form>
     </DefaultLayout>
