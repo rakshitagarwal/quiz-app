@@ -101,17 +101,19 @@ export default function AddQuiz() {
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                            required
                         />
                     </div>
                     <div className="mb-4.5">
                         <label className="mb-3 block text-sm font-medium text-black dark:text-white">Quiz Description</label>
-                        <input
-                            type="text"
+                        <textarea
+                            rows={3}
                             placeholder="Enter quiz description"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
+                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        ></textarea>
+                        
                     </div>
                     {questions.map((question, qIndex) => (
                         <div
@@ -190,17 +192,28 @@ export default function AddQuiz() {
                         <button
                             type="button"
                             onClick={handleAddQuestion}
-                            className="mb-4 w-32 flex justify-center rounded bg-primary p-3 font-medium text-white hover:bg-opacity-90"
+                            className="mb-4 w-fit flex justify-center rounded bg-primary p-2 font-medium text-white hover:bg-opacity-90"
                         >
                             Add Question
                         </button>
                     )}
+                    <div className="flex flex-row">
                     <button
                         type="submit"
-                        className="w-32 flex justify-center rounded bg-green-600 p-3 font-medium text-white hover:bg-opacity-90"
+                        className="w-fit flex justify-center rounded bg-green-600 p-2 font-medium text-white hover:bg-opacity-90"
                     >
                         Add Quiz
                     </button>
+                    &nbsp;                    &nbsp;
+
+                    <button
+                        type="button"
+                        onClick={()=> router.push('/tables')}
+                        className="w-fit flex justify-center rounded bg-primary p-2 font-medium text-white hover:bg-opacity-90"
+                    >
+                        Cancel
+                    </button>
+                    </div>
                 </div>
             </form>
         </DefaultLayout>

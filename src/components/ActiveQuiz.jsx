@@ -1,15 +1,13 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { useRouter } from 'next/navigation';
+"use client";
 
-const ActiveQuiz = ({id, title, description, questions}) => {
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import DefaultLayout from './Layouts/DefaultLayout';
+
+const ActiveQuiz = ({ id, title, description, questions }) => {
     const router = useRouter();
-    const [quizTitle, setQuizTitle] = useState(title || "");
-    const [quizDescription, setQuizDescription] = useState(description || "");
-    const [quizQuestions, setQuizQuestions] = useState(
-        questions || [{ question: "", answers: ["", ""], correctAnswer: "" }]
-    );
+    const passPercentage = 60;
+
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState('');
     const [answerChecked, setAnswerChecked] = useState(false);
@@ -21,36 +19,10 @@ const ActiveQuiz = ({id, title, description, questions}) => {
         wrongAnswers: 0,
     });
 
-    const passPercentage = 60;
+    if (!questions.length) return <div>Loading Quiz...</div>;
 
-    const getQuizById = async () => {
-        try {
-            // const newId = '6746b7390d694f52fb83cc0d'
-            const res = await fetch(`http://localhost:3000/api/quiz/${id}`, {
-                cache: "no-store",
-            });
-
-            if (!res.ok) {
-                throw new Error("Failed to fetch topic");
-            }
-            const {quiz} = await res.json();
-            console.log("quiz", quiz);
-            
-            setQuizQuestions(quiz.questions)
-            return ;
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    useEffect(() => {
-        getQuizById(id)
-    }, [id]);
-
-    if (!quizQuestions.length) return <div>Loading Quiz...</div>;
-
-    const { question, answers, correctAnswer } = quizQuestions[currentQuestionIndex];
-    const percentage = (quizResult.score / (quizQuestions.length * 5)) * 100;
+    const { question, answers, correctAnswer } = questions[currentQuestionIndex];
+    const percentage = (quizResult.score / (questions.length * 5)) * 100;
     const status = percentage >= passPercentage ? 'Pass' : 'Fail';
 
     const onAnswerSelected = (answer, idx) => {
@@ -83,92 +55,90 @@ const ActiveQuiz = ({id, title, description, questions}) => {
     };
 
     return (
-        <div className="container mt-5">
-            <div>
-                {!showResults ? (
-                    <div className="card p-4">
-                        <h4>{question}</h4>
-                        <ul className="list-group">
-                            {answers.map((answer, idx) => (
-                                <li
-                                    key={idx}
-                                    onClick={() => onAnswerSelected(answer, idx)}
-                                    className={
-                                        'list-group-item ' +
-                                        (selectedAnswerIndex === idx ? 'active' : '') +
-                                        ' cursor-pointer'
-                                    }
+        <DefaultLayout>
+            <div className="container mx-auto mt-5 px-4">
+                <h1 className="text-3xl font-bold mb-4">{title}</h1>
+                <p className="text-lg mb-6">{description}</p>
+                <div>
+                    {!showResults ? (
+                        <div className="bg-white p-6 rounded-lg shadow-lg">
+                            <h4 className="text-2xl mb-4">{question}</h4>
+                            <ul className="space-y-3">
+                                {answers.map((answer, idx) => (
+                                    <li
+                                        key={idx}
+                                        onClick={() => onAnswerSelected(answer, idx)}
+                                        className={`p-3 rounded cursor-pointer hover:bg-gray-200 
+                                        ${selectedAnswerIndex === idx ? 'bg-blue-100' : ''}`}
+                                    >
+                                        {answer}
+                                    </li>
+                                ))}
+                            </ul>
+                            <div className="flex justify-between mt-4">
+                                <b>Question {currentQuestionIndex + 1}/{questions.length}</b>
+                                <button
+                                    onClick={handleNextQuestion}
+                                    className={`px-4 py-2 rounded bg-blue-500 text-white 
+                                    ${!answerChecked ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    disabled={!answerChecked}
                                 >
-                                    {answer}
-                                </li>
-                            ))}
-                        </ul>
-                        <div className="d-flex justify-content-between mt-3">
-                            <b>
-                                Question {currentQuestionIndex + 1}/{questions.length}
-                            </b>
-                            <button
-                                onClick={handleNextQuestion}
-                                className="btn btn-primary"
-                                disabled={!answerChecked}
-                            >
-                                {currentQuestionIndex === questions.length - 1
-                                    ? 'Submit'
-                                    : 'Next Question'}
-                            </button>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="card p-4">
-                        <h3>Quiz Results</h3>
-                        <table className="table">
-                            <tbody>
-                                <tr>
-                                    <td>Total Questions:</td>
-                                    <td>{questions.length}</td>
-                                </tr>
-                                <tr>
-                                    <td>Total Score:</td>
-                                    <td>{quizResult.score}</td>
-                                </tr>
-                                <tr>
-                                    <td>Correct Answers:</td>
-                                    <td>{quizResult.correctAnswers}</td>
-                                </tr>
-                                <tr>
-                                    <td>Wrong Answers:</td>
-                                    <td>{quizResult.wrongAnswers}</td>
-                                </tr>
-                                <tr>
-                                    <td>Percentage:</td>
-                                    <td>{percentage.toFixed(2)}%</td>
-                                </tr>
-                                <tr>
-                                    <td>Status:</td>
-                                    <td>{status}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div className='flow'>
-
-                        <button
-                            onClick={() => window.location.reload()}
-                            className="btn btn-primary mt-3"
-                            >
-                            Restart
-                        </button>
-                        &nbsp;&nbsp;
-                        <button
-                            onClick={() => router.push('/tables')}
-                            className="btn btn-success mt-3"
-                            >
-                            Back
-                        </button>
+                                    {currentQuestionIndex === questions.length - 1
+                                        ? 'Submit'
+                                        : 'Next Question'}
+                                </button>
                             </div>
-                    </div>
-                )}
+                        </div>
+                    ) : (
+                        <div className="bg-white p-6 rounded-lg shadow-lg">
+                            <h3 className="text-2xl mb-4">Quiz Results</h3>
+                            <table className="min-w-full table-auto">
+                                <tbody>
+                                    <tr>
+                                        <td className="px-4 py-2 font-semibold">Total Questions:</td>
+                                        <td className="px-4 py-2">{questions.length}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-4 py-2 font-semibold">Total Score:</td>
+                                        <td className="px-4 py-2">{quizResult.score}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-4 py-2 font-semibold">Correct Answers:</td>
+                                        <td className="px-4 py-2">{quizResult.correctAnswers}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-4 py-2 font-semibold">Wrong Answers:</td>
+                                        <td className="px-4 py-2">{quizResult.wrongAnswers}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-4 py-2 font-semibold">Percentage:</td>
+                                        <td className="px-4 py-2">{percentage.toFixed(2)}%</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-4 py-2 font-semibold">Status:</td>
+                                        <td className="px-4 py-2">{status}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div className="flex justify-start mt-6">
+                                <button
+                                    onClick={() => window.location.reload()}
+                                    className="px-4 py-2 bg-blue-500 text-white rounded mr-3"
+                                >
+                                    Restart
+                                </button>
+                                <button
+                                    onClick={() => router.push('/tables')}
+                                    className="px-4 py-2 bg-green-500 text-white rounded"
+                                >
+                                    Back
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
+        </DefaultLayout>
     );
 };
 

@@ -16,7 +16,7 @@ const TablesPage = () => {
     <DefaultLayout>
       <Breadcrumb pageName="Quizzes" />
       <Link href={"/quiz/add"}>
-        <button className="flex w-32 justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
+        <button className="flex w-fit justify-center rounded bg-primary p-2 font-medium text-gray hover:bg-opacity-90">
           Add Quiz
         </button>
       </Link>
