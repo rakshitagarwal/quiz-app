@@ -1,11 +1,11 @@
 "use client";
+
 import dynamic from "next/dynamic";
-import React from "react";
 import ChartOne from "../Charts/ChartOne";
 import ChartTwo from "../Charts/ChartTwo";
-import ChatCard from "../Chat/ChatCard";
-// import TableOne from "../Tables/TableOne";
 import CardDataStats from "../CardDataStats";
+import { getSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 const MapOne = dynamic(() => import("@/components/Maps/MapOne"), {
   ssr: false,
@@ -15,11 +15,43 @@ const ChartThree = dynamic(() => import("@/components/Charts/ChartThree"), {
   ssr: false,
 });
 
-const ECommerce: React.FC = () => {
+const getData = async () => {
+  try {
+    const session = await getSession();
+    const res = await fetch("http://localhost:3000/api/test", {
+      method: "PUT",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        user: session?.user?._id,
+      }),
+    });
+    if (!res.ok) {
+      throw new Error("Failed to create a quiz");
+    }
+    const {analytics} = await res.json();
+    return analytics;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const ECommerce  =  () => {
+  const [stats, setStates]=useState([]);
+  
+  useEffect(()=>{
+    async function fetchData(){
+      const data = await getData();
+      setStates(data)
+    }
+    fetchData();
+  },[])
+
   return (
     <>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
-        <CardDataStats title="Total views" total="$3.456K" rate="0.43%" levelUp>
+        <CardDataStats title="Average Score" total="$3.456K" rate="0.43%" levelUp>
           <svg
             className="fill-primary dark:fill-white"
             width="22"
@@ -38,7 +70,7 @@ const ECommerce: React.FC = () => {
             />
           </svg>
         </CardDataStats>
-        <CardDataStats title="Total Profit" total="$45,2K" rate="4.35%" levelUp>
+        <CardDataStats title="Quiz Taken" total="$45,2K" rate="4.35%" levelUp>
           <svg
             className="fill-primary dark:fill-white"
             width="20"
@@ -110,10 +142,6 @@ const ECommerce: React.FC = () => {
         <ChartTwo />
         <ChartThree />
         <MapOne />
-        <div className="col-span-12 xl:col-span-8">
-          {/* <TableOne /> */}
-        </div>
-        <ChatCard />
       </div>
     </>
   );

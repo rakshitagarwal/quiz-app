@@ -4,17 +4,14 @@ import Analytics from "../../../models/analytics";
 
 export async function POST(request) {
   const { quiz, user, score, correctResponses, incorrectResponses, status } = await request.json();
-  await connectMongoDB();
-  console.log("sendData",{quiz, user, score, correctResponses, incorrectResponses, status });
-  
+  await connectMongoDB();  
   await Analytics.create({quiz, user, score, correctResponses, incorrectResponses, status });
   return NextResponse.json({ message: "Analytics Created" }, { status: 201 });
 }
 
 export async function PUT(request) {
-  const { username, password } = await request.json();
-  await connectMongoDB();
-  const userFound = await Analytics.findOne({ username, password });    
-  return NextResponse.json({ userFound });
+  const { user } = await request.json();
+  await connectMongoDB();  
+  const analytics = await Analytics.find({ user });
+  return NextResponse.json({ analytics });
 }
-

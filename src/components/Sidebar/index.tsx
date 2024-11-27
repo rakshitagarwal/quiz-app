@@ -47,7 +47,7 @@ const menuGroups = [
         ),
         label: "Dashboard",
         route: "#",
-        children: [{ label: "eCommerce", route: "/" }],
+        children: [{ label: "Quiz Analytics", route: "/" }],
       },
       {
         icon: (
