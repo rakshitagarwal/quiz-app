@@ -1,9 +1,10 @@
-import React from 'react'
+import DefaultLayout from '@/components/Layouts/DefaultLayout';
+import Quiz from '../../../components/Quiz'
 
-const page = () => {
+export default function Home() {
   return (
-    <div>page</div>
-  )
+    <DefaultLayout>
+      <Quiz />
+    </DefaultLayout>
+  );
 }
-
-export default page

@@ -2,18 +2,9 @@ import mongoose, { Schema } from "mongoose";
 
 const QuestionSchema = new Schema(
   {
-    questionText: { type: String, required: true },
-    type: {
-      type: String,
-      enum: ["Multiple Choice", "True/False", "Short Answer"],
-      required: true,
-    },
-    options: [
-      {
-        text: { type: String },
-        isCorrect: { type: Boolean, default: false }, 
-      },
-    ],
+    question: { type: String, required: true },
+    answers: { type: [String], required: true },
+    correctAnswer: { type: String, required: true },
   },
   { _id: false },
 );

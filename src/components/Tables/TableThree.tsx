@@ -9,7 +9,7 @@ const TableThree = () => {
 
   const mysession = async () => {
     const session = await getSession();
-    console.log("session", session);
+    // console.log("session", session);
   };
 
   const getQuizes = async () => {
@@ -84,7 +84,7 @@ const TableThree = () => {
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
-                    <Link href={`/quiz/view/${quiz._id}`}>
+                    <Link href={`/quiz/play/${quiz._id}`}>
                       <button className="hover:text-primary">
                         <svg
                           className="fill-current"
