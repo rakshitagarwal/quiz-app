@@ -12,7 +12,7 @@ export async function POST(request) {
 export async function PUT(request) {
   const { username, password } = await request.json();
   await connectMongoDB();
-  const userFound = await User.findOne({ username, password });  
+  const userFound = await User.findOne({ username, password });    
   return NextResponse.json({ userFound });
 }
 

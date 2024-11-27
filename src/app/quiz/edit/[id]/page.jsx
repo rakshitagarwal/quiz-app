@@ -1,3 +1,4 @@
+import { getSession } from 'next-auth/react';
 import EditQuizForm from '../../../../components/Tables/QuizEdit'
 
 const getQuizById = async (id) => {
@@ -21,5 +22,5 @@ export default async function EditQuiz({ params }) {
   const { quiz } = await getQuizById(id);
   const { title, description, questions } = quiz;
 
-  return <EditQuizForm id={id} title={title} description={description} questions={questions} />;
+  return <EditQuizForm id={id} title={title} description={description} questions={questions}/>;
 }

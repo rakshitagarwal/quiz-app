@@ -27,7 +27,6 @@ const UserAdd = () => {
       if (!res.ok) {
         setError("Invalid username or password");
       } else {
-        console.log("Sign-up successful", res.json());
         router.push("/signin");
       }
     } catch (err) {

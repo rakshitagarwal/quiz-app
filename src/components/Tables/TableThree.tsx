@@ -1,5 +1,6 @@
 "use client";
 import { Quiz } from "@/types/quiz";
+import { getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
@@ -11,18 +12,25 @@ const TableThree = () => {
 
   const getQuizes = async () => {
     try {
+      const session = await getSession();
+      console.log("Session in table: " , session);
+      
       const res = await fetch("http://localhost:3000/api/quiz", {
-        cache: "no-store",
-      });
+        method: "PUT",
+        headers: {
+            "Content-type": "application/json",
+        },
+        body: JSON.stringify({ user: session?.user }),
+    });
 
       if (!res.ok) {
-        throw new Error("Failed to fetch topics");
+        throw new Error("Failed to fetch quizzes");
       }
       const { quizes } = await res.json();
       setQuizes(quizes);
       return;
     } catch (error) {
-      console.log("Error loading topics: ", error);
+      console.log("Error loading quizzes: ", error);
     }
   };
 

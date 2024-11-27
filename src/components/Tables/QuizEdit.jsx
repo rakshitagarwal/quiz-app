@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { getSession } from "next-auth/react";
 
 export default function EditQuizForm({ id, title, description, questions }) {
   const router = useRouter();
@@ -45,7 +46,7 @@ export default function EditQuizForm({ id, title, description, questions }) {
     const updatedQuestions = [...quizQuestions];
     updatedQuestions[qIndex].answers = updatedQuestions[qIndex].answers.filter((_, i) => i !== aIndex);
     if (updatedQuestions[qIndex].correctAnswer === updatedQuestions[qIndex].answers[aIndex]) {
-      updatedQuestions[qIndex].correctAnswer = ""; // Clear correctAnswer if removed
+      updatedQuestions[qIndex].correctAnswer = ""; 
     }
     setQuizQuestions(updatedQuestions);
   };
@@ -66,12 +67,13 @@ export default function EditQuizForm({ id, title, description, questions }) {
     }
 
     try {
+        const session = await getSession();
       const res = await fetch(`http://localhost:3000/api/quiz/${id}`, {
         method: "PUT",
         headers: {
           "Content-type": "application/json",
         },
-        body: JSON.stringify({ title: quizTitle, description: quizDescription, questions: quizQuestions }),
+        body: JSON.stringify({ title: quizTitle, description: quizDescription, questions: quizQuestions, user: session.user._id}),
       });
 
       if (res.ok) {

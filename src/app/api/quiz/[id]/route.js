@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import Quiz from "../../../../models/quiz";
 import connectMongoDB from "../../../../lib/mongo";
+import { getSession } from "next-auth/react";
 
 export async function PUT(request, { params }) {
   const { id } = params;
-  const { title, description, questions } = await request.json();
+  const { title, description, questions, user } = await request.json();
   await connectMongoDB();
-  await Quiz.findByIdAndUpdate(id, { title, description, questions });
+  await Quiz.findByIdAndUpdate(id, { title, description, questions, user });
   return NextResponse.json({ message: "Quiz updated" }, { status: 200 });
 }
 

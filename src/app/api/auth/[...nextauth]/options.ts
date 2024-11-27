@@ -34,7 +34,8 @@ export const options: NextAuthOptions = {
                     },
                     body: JSON.stringify({ username: credentials?.username, password: credentials?.password }),
                 });
-                const { userFound } = await res.json()
+                const { userFound } = await res.json();
+                
                 if (credentials?.username === userFound.username && credentials?.password === userFound.password) {
                     return userFound
                 } else {
@@ -46,4 +47,18 @@ export const options: NextAuthOptions = {
     pages: {
         signIn: '/signin', 
       },
+      callbacks: {
+        async session({ session, token }) {
+            if (token?.user) {
+                session.user = token.user;
+            }
+            return session;
+        },
+        async jwt({ token, user }) {
+            if (user) {
+                token.user = user;
+            }
+            return token;
+        }
+    }
 }

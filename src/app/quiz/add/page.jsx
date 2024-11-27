@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { getSession } from "next-auth/react";
 
 export default function AddQuiz() {
     const router = useRouter();
@@ -65,12 +66,13 @@ export default function AddQuiz() {
         }
 
         try {
+            const session = await getSession();            
             const res = await fetch("http://localhost:3000/api/quiz", {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json",
                 },
-                body: JSON.stringify({ title, description, questions }),
+                body: JSON.stringify({ title, description, questions, user: session.user._id }),
             });
 
             if (res.ok) {
