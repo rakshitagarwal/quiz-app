@@ -12,9 +12,7 @@ const TableThree = () => {
 
   const getQuizes = async () => {
     try {
-      const session = await getSession();
-      console.log("Session in table: " , session);
-      
+      const session = await getSession();      
       const res = await fetch("http://localhost:3000/api/quiz", {
         method: "PUT",
         headers: {

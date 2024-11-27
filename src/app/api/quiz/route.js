@@ -5,7 +5,7 @@ import connectMongoDB from "../../../lib/mongo";
 
 export async function POST(request) {
   const { title, description, questions, user } = await request.json();
-  await connectMongoDB();
+  await connectMongoDB();  
   await Quiz.create({ title, description, questions, user});
   return NextResponse.json({ message: "Quiz Created" }, { status: 201 });
 }
