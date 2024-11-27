@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DefaultLayout from './Layouts/DefaultLayout';
 
@@ -54,6 +54,8 @@ const ActiveQuiz = ({ id, title, description, questions }) => {
         setAnswerChecked(false);
     };
 
+    const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
+
     return (
         <DefaultLayout>
             <div className="container mx-auto mt-5 px-4">
@@ -61,34 +63,39 @@ const ActiveQuiz = ({ id, title, description, questions }) => {
                 <p className="text-lg mb-6">{description}</p>
                 <div>
                     {!showResults ? (
-                        <div className="bg-white p-6 rounded-lg shadow-lg">
-                            <h4 className="text-2xl mb-4">{question}</h4>
-                            <ul className="space-y-3">
-                                {answers.map((answer, idx) => (
-                                    <li
-                                        key={idx}
-                                        onClick={() => onAnswerSelected(answer, idx)}
-                                        className={`p-3 rounded cursor-pointer hover:bg-gray-200 
-                                        ${selectedAnswerIndex === idx ? 'bg-blue-100' : ''}`}
-                                    >
-                                        {answer}
-                                    </li>
-                                ))}
-                            </ul>
-                            <div className="flex justify-between mt-4">
-                                <b>Question {currentQuestionIndex + 1}/{questions.length}</b>
-                                <button
-                                    onClick={handleNextQuestion}
-                                    className={`px-4 py-2 rounded bg-blue-500 text-white 
-                                    ${!answerChecked ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                    disabled={!answerChecked}
-                                >
-                                    {currentQuestionIndex === questions.length - 1
-                                        ? 'Submit'
-                                        : 'Next Question'}
-                                </button>
+                        <>
+                            <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                                <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${progressPercentage}%` }} />
                             </div>
-                        </div>
+                            <div className="bg-white p-6 rounded-lg shadow-lg">
+                                <h4 className="text-2xl mb-4">{question}</h4>
+                                <ul className="space-y-3">
+                                    {answers.map((answer, idx) => (
+                                        <li
+                                            key={idx}
+                                            onClick={() => onAnswerSelected(answer, idx)}
+                                            className={`p-3 rounded cursor-pointer hover:bg-gray-200 
+                                        ${selectedAnswerIndex === idx ? 'bg-blue-100' : ''}`}
+                                        >
+                                            {answer}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <div className="flex justify-between mt-4">
+                                    <b>Question {currentQuestionIndex + 1}/{questions.length}</b>
+                                    <button
+                                        onClick={handleNextQuestion}
+                                        className={`px-4 py-2 rounded bg-blue-500 text-white 
+                                    ${!answerChecked ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        disabled={!answerChecked}
+                                    >
+                                        {currentQuestionIndex === questions.length - 1
+                                            ? 'Submit'
+                                            : 'Next Question'}
+                                    </button>
+                                </div>
+                            </div>
+                        </>
                     ) : (
                         <div className="bg-white p-6 rounded-lg shadow-lg">
                             <h3 className="text-2xl mb-4">Quiz Results</h3>
@@ -107,7 +114,7 @@ const ActiveQuiz = ({ id, title, description, questions }) => {
                                         <td className="px-4 py-2">{quizResult.correctAnswers}</td>
                                     </tr>
                                     <tr>
-                                        <td className="px-4 py-2 font-semibold">Wrong Answers:</td>
+                                        <td className="px-4 py-2 font-semibold">Incorrect Answers:</td>
                                         <td className="px-4 py-2">{quizResult.wrongAnswers}</td>
                                     </tr>
                                     <tr>
