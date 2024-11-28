@@ -8,3 +8,10 @@ export async function PUT(request, { params }) {
   await Analytics.findByIdAndUpdate(id, {quiz, playedBy, score, correctResponses, incorrectResponses, status });
   return NextResponse.json({ message: "Quiz updated" }, { status: 200 });
 }
+
+export async function POST(request, { params }) {
+  const { id } = params;
+  await connectMongoDB();
+  const analytics = await Analytics.find({playedBy: id});  
+  return NextResponse.json({ analytics }, { status: 200 });
+}
