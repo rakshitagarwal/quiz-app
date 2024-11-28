@@ -26,7 +26,7 @@ const UserLogin = () => {
         setError("Invalid email or password");
       } else {
         const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl");
-        router.push(callbackUrl || '/tables');
+        router.push(callbackUrl || '/');
       }
     } catch (err) {
       setError("Something went wrong. Please try again later.");

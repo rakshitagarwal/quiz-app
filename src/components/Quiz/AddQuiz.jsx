@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getSession } from "next-auth/react";
 import SwitcherThree from "@/components/Switchers/SwitcherThree";
 
@@ -93,7 +92,7 @@ export default function AddQuiz() {
     };
 
     return (
-        <DefaultLayout>
+        <>
             <form
                 onSubmit={handleSubmit}
                 className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark"
@@ -243,6 +242,6 @@ export default function AddQuiz() {
                     </div>
                 </div>
             </form>
-        </DefaultLayout>
+        </>
     );
 }

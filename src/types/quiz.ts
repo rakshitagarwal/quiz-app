@@ -3,5 +3,29 @@ export type Quiz = {
     title: string,
     description: string,
     questions: [],
+    user: string,
     privacy: boolean
+}
+
+export type Question = {
+    question: string,
+    questionType: string,
+    answers: string[],
+    correctAnswer: string
+}
+
+export type User = {
+    name: string,
+    username: string,
+    password: string
+}
+
+export type Analytics = {
+    quiz:  string,
+    user: string
+    score:  number,
+    correctResponses: number,
+    incorrectResponses: number, 
+    status: string,
+    timeTaken?: number,
 }

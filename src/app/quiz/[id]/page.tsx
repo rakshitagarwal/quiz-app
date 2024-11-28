@@ -1,6 +1,7 @@
 import ActiveQuiz from '../../../components/Quiz/ActiveQuiz'
+import { Metadata } from "next";
 
-const getQuizById = async (id) => {
+const getQuizById = async (id: string) => {
     try {
         const res = await fetch(`http://localhost:3000/api/quiz/${id}`, {
             cache: "no-store",
@@ -16,10 +17,21 @@ const getQuizById = async (id) => {
     }
 };
 
-export default async function PlayQuiz({ params }) {
+export const metadata: Metadata = {
+    title: "View Quiz",
+    description: "View Quiz",
+};
+
+
+type QuizViewParams = {
+    params: {
+        id: string;
+    };
+};
+export default async function PlayQuiz({ params }: QuizViewParams) {
     const { id } = params;
     const { quiz } = await getQuizById(id);
     const { title, description, questions, privacy } = quiz;
-    
-    return <ActiveQuiz id={id} title={title} description={description} questions={questions} privacy={privacy}/>
+
+    return <ActiveQuiz id={id} title={title} description={description} questions={questions} privacy={privacy} />
 }

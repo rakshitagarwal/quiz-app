@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getSession } from "next-auth/react";
 import SwitcherThree from "../Switchers/SwitcherThree";
 
-export default function EditQuizForm({ id, title, description, questions, privacy }) {
+export default function EditQuiz({ id, title, description, questions, privacy }) {
   const router = useRouter();
   const [quizTitle, setQuizTitle] = useState(title || "");
   const [quizDescription, setQuizDescription] = useState(description || "");
@@ -98,7 +97,7 @@ export default function EditQuizForm({ id, title, description, questions, privac
   };
 
   return (
-    <DefaultLayout>
+    <>
       <form
         onSubmit={handleSubmit}
         className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark"
@@ -247,6 +246,6 @@ export default function EditQuizForm({ id, title, description, questions, privac
           </div>
         </div>
       </form>
-    </DefaultLayout>
+    </>
   );
 }

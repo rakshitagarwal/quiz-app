@@ -5,7 +5,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 export const metadata: Metadata = {
   title:
     "Analytics Dashboard",
-  description: "This is Next.js Home for TailAdmin Dashboard Template",
+  description: "Analytics Dashboard",
 };
 
 export default function Home() {
