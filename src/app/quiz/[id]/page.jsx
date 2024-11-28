@@ -19,7 +19,7 @@ const getQuizById = async (id) => {
 export default async function PlayQuiz({ params }) {
     const { id } = params;
     const { quiz } = await getQuizById(id);
-    const { title, description, questions } = quiz;
-
-    return <ActiveQuiz id={id} title={title} description={description} questions={questions} />
+    const { title, description, questions, privacy } = quiz;
+    
+    return <ActiveQuiz id={id} title={title} description={description} questions={questions} privacy={privacy}/>
 }

@@ -1,22 +1,15 @@
 "use client";
-import { getSession, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const UserLogin = () => {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    const mysession = async () => {
-      const session = await getSession();
-    };
-    mysession();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,9 +25,8 @@ const UserLogin = () => {
       if (result?.error) {
         setError("Invalid email or password");
       } else {
-        // Redirect or handle successful sign-in logic here
-        console.log("Sign-in successful", result);
-        router.push("/tables");
+        const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl");
+        router.push(callbackUrl || '/tables');
       }
     } catch (err) {
       setError("Something went wrong. Please try again later.");

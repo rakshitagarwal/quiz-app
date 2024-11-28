@@ -17,7 +17,8 @@ const QuizSchema = new Schema(
       type: [QuestionSchema],
       validate: [arrayLimit, "{PATH} exceeds the limit of 50"],
     },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, 
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    privacy: { type: Boolean, default: false }
   },
   {
     timestamps: true,

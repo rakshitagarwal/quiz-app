@@ -9,7 +9,6 @@ const getQuizById = async (id) => {
     if (!res.ok) {
       throw new Error("Failed to fetch topic");
     }
-
     return res.json();
   } catch (error) {
     console.log(error);
@@ -19,7 +18,7 @@ const getQuizById = async (id) => {
 export default async function EditQuiz({ params }) {
   const { id } = params;
   const { quiz } = await getQuizById(id);
-  const { title, description, questions } = quiz;
+  const { title, description, questions, privacy } = quiz;
 
-  return <EditQuizForm id={id} title={title} description={description} questions={questions}/>;
+  return <EditQuizForm id={id} title={title} description={description} questions={questions} privacy={privacy} />;
 }

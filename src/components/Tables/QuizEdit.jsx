@@ -4,12 +4,16 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getSession } from "next-auth/react";
+import SwitcherThree from "../Switchers/SwitcherThree";
 
-export default function EditQuizForm({ id, title, description, questions }) {
+export default function EditQuizForm({ id, title, description, questions, privacy }) {
+  console.log("props",{ id, title, description, questions, privacy });
+  
   const router = useRouter();
   const [quizTitle, setQuizTitle] = useState(title || "");
   const [quizDescription, setQuizDescription] = useState(description || "");
   const [quizQuestions, setQuizQuestions] = useState(questions || [{ question: "", answers: ["", ""], correctAnswer: "" }]);
+  const [isPrivate, setIsPrivate] = useState(privacy)
 
   const handleAddQuestion = () => {
     setQuizQuestions([
@@ -46,7 +50,7 @@ export default function EditQuizForm({ id, title, description, questions }) {
     const updatedQuestions = [...quizQuestions];
     updatedQuestions[qIndex].answers = updatedQuestions[qIndex].answers.filter((_, i) => i !== aIndex);
     if (updatedQuestions[qIndex].correctAnswer === updatedQuestions[qIndex].answers[aIndex]) {
-      updatedQuestions[qIndex].correctAnswer = ""; 
+      updatedQuestions[qIndex].correctAnswer = "";
     }
     setQuizQuestions(updatedQuestions);
   };
@@ -73,11 +77,12 @@ export default function EditQuizForm({ id, title, description, questions }) {
         headers: {
           "Content-type": "application/json",
         },
-        body: JSON.stringify({ title: quizTitle, description: quizDescription, questions: quizQuestions, user: session.user._id}),
+        body: JSON.stringify({ title: quizTitle, description: quizDescription, questions: quizQuestions, user: session.user._id, privacy: isPrivate}),
       });
 
       if (res.ok) {
         router.push("/tables");
+        router.refresh()
       } else {
         throw new Error("Failed to update quiz");
       }
@@ -117,6 +122,10 @@ export default function EditQuizForm({ id, title, description, questions }) {
               className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
             ></textarea>
           </div>
+          <div className="flex mb-4.5">
+                    <label className="py-1 block text-sm font-medium text-black dark:text-white">Private Quiz ?</label>
+                    &nbsp;&nbsp;&nbsp;&nbsp; <SwitcherThree isPrivate={isPrivate} setIsPrivate={setIsPrivate} />
+                    </div>
           {quizQuestions.map((question, qIndex) => (
             <div
               key={qIndex}
@@ -200,19 +209,19 @@ export default function EditQuizForm({ id, title, description, questions }) {
             </button>
           )}
           <div className="flex">
-          <button
-            type="submit"
-            className="w-32 flex justify-center rounded bg-green-600 p-3 font-medium text-white hover:bg-opacity-90"
-          >
-            Update Quiz
-          </button>&nbsp;&nbsp;
-          <button
-            type="button"
-            onClick={()=>router.push('/tables')}
-            className="w-32 flex justify-center rounded bg-primary p-3 font-medium text-white hover:bg-opacity-90"
-          >
-            Cancel
-          </button>
+            <button
+              type="submit"
+              className="w-32 flex justify-center rounded bg-green-600 p-3 font-medium text-white hover:bg-opacity-90"
+            >
+              Update Quiz
+            </button>&nbsp;&nbsp;
+            <button
+              type="button"
+              onClick={() => router.push('/tables')}
+              className="w-32 flex justify-center rounded bg-primary p-3 font-medium text-white hover:bg-opacity-90"
+            >
+              Cancel
+            </button>
           </div>
         </div>
       </form>

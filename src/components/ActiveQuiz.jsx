@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { getSession } from "next-auth/react";
+import { useRouter, usePathname } from "next/navigation";
 
-const ActiveQuiz = ({ id, title, description, questions }) => {
+const ActiveQuiz = ({ id, title, description, questions, privacy }) => {
   const router = useRouter();
+  const pathname = usePathname(); 
   const passPercentage = 60;
-
+  
+  const [isPrivate, setIsPrivate] = useState(privacy);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState("");
   const [answerChecked, setAnswerChecked] = useState(false);
@@ -18,6 +20,17 @@ const ActiveQuiz = ({ id, title, description, questions }) => {
     correctAnswers: 0,
     wrongAnswers: 0,
   });
+
+  const userSession = async () => {
+    const session = await getSession();
+    if (!session && isPrivate) {
+      router.push(`/signin?callbackUrl=${encodeURIComponent(pathname)}`);
+    }
+  }
+
+  useEffect(() => {
+    userSession()
+  },[])
 
   const { question, answers, correctAnswer } = questions[currentQuestionIndex];
   const percentage = (quizResult.score / questions.length) * 100;

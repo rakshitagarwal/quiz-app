@@ -4,7 +4,9 @@ import Analytics from "../../../models/analytics";
 
 export async function POST(request) {
   const { quiz, user, score, correctResponses, incorrectResponses, status } = await request.json();
+  console.log("sendData", {quiz, user, score, correctResponses, incorrectResponses, status });
   await connectMongoDB();  
+  
   await Analytics.create({quiz, user, score, correctResponses, incorrectResponses, status });
   return NextResponse.json({ message: "Analytics Created" }, { status: 201 });
 }

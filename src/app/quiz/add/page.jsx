@@ -4,11 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getSession } from "next-auth/react";
+import SwitcherThree from "@/components/Switchers/SwitcherThree";
 
 export default function AddQuiz() {
     const router = useRouter();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [isPrivate, setIsPrivate] = useState(false)
+    
     const [questions, setQuestions] = useState([
         { question: "", answers: ["", ""], correctAnswer: "" },
     ]);
@@ -66,13 +69,13 @@ export default function AddQuiz() {
         }
 
         try {
-            const session = await getSession();            
+            const session = await getSession();
             const res = await fetch("http://localhost:3000/api/quiz", {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json",
                 },
-                body: JSON.stringify({ title, description, questions, user: session.user._id }),
+                body: JSON.stringify({ title, description, questions, user: session.user._id , privacy: isPrivate}),
             });
 
             if (res.ok) {
@@ -115,7 +118,10 @@ export default function AddQuiz() {
                             onChange={(e) => setDescription(e.target.value)}
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         ></textarea>
-                        
+                    </div>
+                    <div className="flex mb-4.5">
+                    <label className="py-1 block text-sm font-medium text-black dark:text-white">Private Quiz ?</label>
+                    &nbsp;&nbsp;&nbsp;&nbsp; <SwitcherThree setIsPrivate={setIsPrivate} />
                     </div>
                     {questions.map((question, qIndex) => (
                         <div
@@ -199,22 +205,22 @@ export default function AddQuiz() {
                             Add Question
                         </button>
                     )}
+                
                     <div className="flex flex-row">
-                    <button
-                        type="submit"
-                        className="w-fit flex justify-center rounded bg-green-600 p-2 font-medium text-white hover:bg-opacity-90"
-                    >
-                        Add Quiz
-                    </button>
-                    &nbsp;                    &nbsp;
-
-                    <button
-                        type="button"
-                        onClick={()=> router.push('/tables')}
-                        className="w-fit flex justify-center rounded bg-primary p-2 font-medium text-white hover:bg-opacity-90"
-                    >
-                        Cancel
-                    </button>
+                        <button
+                            type="submit"
+                            className="w-fit flex justify-center rounded bg-green-600 p-2 font-medium text-white hover:bg-opacity-90"
+                        >
+                            Add Quiz
+                        </button>
+                        &nbsp;&nbsp;
+                        <button
+                            type="button"
+                            onClick={() => router.push('/tables')}
+                            className="w-fit flex justify-center rounded bg-primary p-2 font-medium text-white hover:bg-opacity-90"
+                        >
+                            Cancel
+                        </button>
                     </div>
                 </div>
             </form>

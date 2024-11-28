@@ -1,7 +1,13 @@
 import { useState } from "react";
 
-const SwitcherThree = () => {
-  const [enabled, setEnabled] = useState(false);
+const SwitcherThree = ({ isPrivate, setIsPrivate }: {isPrivate : boolean, setIsPrivate: (arg0: boolean) => void }) => {
+  const [enabled, setEnabled] = useState(isPrivate);
+
+  const changeHandler = () => {
+    const newState = !enabled;
+    setEnabled(newState);
+    setIsPrivate(newState);
+  };
 
   return (
     <div>
@@ -14,9 +20,7 @@ const SwitcherThree = () => {
             type="checkbox"
             id="toggle3"
             className="sr-only"
-            onChange={() => {
-              setEnabled(!enabled);
-            }}
+            onChange={changeHandler}
           />
           <div className="block h-8 w-14 rounded-full bg-meta-9 dark:bg-[#5A616B]"></div>
           <div
