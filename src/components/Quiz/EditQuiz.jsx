@@ -80,7 +80,7 @@ export default function EditQuiz({ id, title, description, questions }) {
         headers: {
           "Content-type": "application/json",
         },
-        body: JSON.stringify({ title: quizTitle, description: quizDescription, questions: quizQuestions, user: session.user._id }),
+        body: JSON.stringify({ title: quizTitle, description: quizDescription, questions: quizQuestions, createdBy: session.user._id }),
       });
 
       if (res.ok) {

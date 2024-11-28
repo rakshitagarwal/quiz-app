@@ -76,7 +76,7 @@ export default function AddQuiz() {
                 headers: {
                     "Content-type": "application/json",
                 },
-                body: JSON.stringify({ title, description, questions, user: session.user._id }),
+                body: JSON.stringify({ title, description, questions, createdBy: session.user._id }),
             });
 
             if (res.ok) {

@@ -3,15 +3,43 @@ import connectMongoDB from "../../../lib/mongo";
 import Analytics from "../../../models/analytics";
 
 export async function POST(request) {
-  const { quiz, user, score, correctResponses, incorrectResponses, status } = await request.json();
+  const { quiz, playedBy, score, correctResponses, incorrectResponses, status } = await request.json();
   await connectMongoDB();
-  await Analytics.create({quiz, user, score, correctResponses, incorrectResponses, status });
-  return NextResponse.json({ message: "Analytics Created" }, { status: 201 });
+
+  const existingAnalytics = await Analytics.findOne({ quiz, playedBy });
+  if (existingAnalytics) {
+    return NextResponse.json({ message: "Entry already exists", analytics: existingAnalytics }, { status: 200 });
+  }
+
+  const newAnalytics = await Analytics.create({ quiz, playedBy, score, correctResponses, incorrectResponses, status });
+  return NextResponse.json({ message: "Analytics Created", analytics: newAnalytics }, { status: 201 });
 }
 
 export async function PUT(request) {
-  const { user } = await request.json();
-  await connectMongoDB();  
-  const analytics = await Analytics.find({ user });
-  return NextResponse.json({ analytics });
+  const { quiz, playedBy } = await request.json();
+  await connectMongoDB();
+
+  const analytics = await Analytics.findOne({ quiz, playedBy });
+  if (!analytics) {
+    return NextResponse.json({ message: "No entry found" }, { status: 404 });
+  }
+  return NextResponse.json({ analytics }, { status: 200 });
 }
+
+// import { NextResponse } from "next/server";
+// import connectMongoDB from "../../../lib/mongo";
+// import Analytics from "../../../models/analytics";
+
+// export async function POST(request) {
+//   const { quiz, playedBy, score, correctResponses, incorrectResponses, status } = await request.json();
+//   await connectMongoDB();
+//   await Analytics.create({quiz, playedBy, score, correctResponses, incorrectResponses, status });
+//   return NextResponse.json({ message: "Analytics Created" }, { status: 201 });
+// }
+
+// export async function PUT(request) {
+//   const { quiz, playedBy } = await request.json();
+//   await connectMongoDB();  
+//   const analytics = await Analytics.findOne({ quiz, playedBy });
+//   return NextResponse.json({ analytics });
+// }

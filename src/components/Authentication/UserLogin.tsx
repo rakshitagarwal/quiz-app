@@ -1,19 +1,39 @@
 "use client";
+
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const UserLogin = () => {
   const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [callbackUrl, setCallbackUrl] = useState<string>("/");
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const callback = urlParams.get("callbackUrl");
+
+    // Validate and sanitize callbackUrl
+    if (callback && callback.startsWith("/")) {
+      setCallbackUrl(callback);
+    } else {
+      setCallbackUrl("/"); // Default fallback
+    }
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
+
+    if (!username || !password) {
+      setError("Username and password are required.");
+      return;
+    }
 
     try {
       const result = await signIn("credentials", {
@@ -21,12 +41,13 @@ const UserLogin = () => {
         username,
         password,
       });
-
+      
       if (result?.error) {
-        setError("Invalid email or password");
-      } else {
-        const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl");
-        router.push(callbackUrl || '/');
+        setError("Invalid username or password");
+      } 
+      if(result?.ok) {
+        toast.success("Signin successful!");
+        router.push(callbackUrl);
       }
     } catch (err) {
       setError("Something went wrong. Please try again later.");
@@ -36,25 +57,25 @@ const UserLogin = () => {
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="flex flex-wrap items-center">
+        {/* Left Section */}
         <div className="hidden w-full xl:block xl:w-1/2">
           <div className="px-26 py-50 text-center">
             <Link className="mb-5.5 inline-block" href="/">
               <Image
                 className="hidden dark:block"
-                src={"/images/logo/logo.svg"}
+                src="/images/logo/logo.svg"
                 alt="Logo"
                 width={176}
                 height={32}
               />
               <Image
                 className="dark:hidden"
-                src={"/images/logo/logo-dark.svg"}
+                src="/images/logo/logo-dark.svg"
                 alt="Logo"
                 width={176}
                 height={32}
               />
             </Link>
-
             <p className="2xl:px-20">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit
               suspendisse.
@@ -184,6 +205,7 @@ const UserLogin = () => {
           </div>
         </div>
 
+        {/* Right Section */}
         <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
           <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
             <span className="mb-1.5 block font-medium">Start for free</span>
@@ -194,6 +216,7 @@ const UserLogin = () => {
             {error && <p className="mb-4 text-red-500">{error}</p>}
 
             <form onSubmit={handleSubmit}>
+              {/* Username Field */}
               <div className="mb-4">
                 <label className="mb-2.5 block font-medium text-black dark:text-white">
                   Username
@@ -202,11 +225,13 @@ const UserLogin = () => {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter your user name"
+                  placeholder="Enter your username"
                   className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                  required
                 />
               </div>
 
+              {/* Password Field */}
               <div className="mb-6">
                 <label className="mb-2.5 block font-medium text-black dark:text-white">
                   Password
@@ -217,9 +242,11 @@ const UserLogin = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="6+ Characters, 1 Capital letter"
                   className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                  required
                 />
               </div>
 
+              {/* Submit Button */}
               <button
                 type="submit"
                 className="mb-5 w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
@@ -227,6 +254,7 @@ const UserLogin = () => {
                 Sign In
               </button>
 
+              {/* Github Login Button */}
               <button
                 type="button"
                 onClick={() => signIn("github")}

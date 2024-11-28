@@ -4,16 +4,16 @@ import Quiz from "../../../models/quiz";
 import connectMongoDB from "../../../lib/mongo";
 
 export async function POST(request) {
-  const { title, description, questions, user } = await request.json();
+  const { title, description, questions, createdBy } = await request.json();
   await connectMongoDB();  
-  await Quiz.create({ title, description, questions, user});
+  await Quiz.create({ title, description, questions, createdBy});
   return NextResponse.json({ message: "Quiz Created" }, { status: 201 });
 }
 
 export async function PUT(request) {
-  const { user } = await request.json();
+  const { createdBy } = await request.json();
   await connectMongoDB();
-  const quizes = await Quiz.find({ user: user._id });
+  const quizes = await Quiz.find({ createdBy });
   return NextResponse.json({ quizes });
 }
 

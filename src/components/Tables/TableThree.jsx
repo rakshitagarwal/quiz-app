@@ -19,7 +19,7 @@ const TableThree = () => {
         headers: {
           "Content-type": "application/json",
         },
-        body: JSON.stringify({ user: session?.user }),
+        body: JSON.stringify({ createdBy: session.user._id }),
       });
 
       if (!res.ok) {

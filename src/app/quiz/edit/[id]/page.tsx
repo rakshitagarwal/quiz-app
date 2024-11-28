@@ -30,6 +30,8 @@ type QuizEditParams = {
 
 export default async function QuizEdit({ params }: QuizEditParams) {
   const { id } = params;
+  console.log("id", id);
+  
   const { quiz } = await getQuizById(id);
   const { title, description, questions } = quiz;
 

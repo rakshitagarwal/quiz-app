@@ -1,16 +1,22 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const UserAdd = () => {
   const router = useRouter();
+  const [callbackUrl, setCallbackUrl] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    setCallbackUrl(urlParams.get("callbackUrl"));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,8 +35,7 @@ const UserAdd = () => {
         setError("Invalid username or password");
       } else {
         toast.success('Signup successful!');
-        const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl");        
-        router.push(`/signin?callbackUrl=${encodeURIComponent(callbackUrl as string)}`);
+        router.push(`/signin${callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`);
       }
     } catch (err) {
       setError("Something went wrong. Please try again later.");
@@ -353,7 +358,9 @@ const UserAdd = () => {
               <div className="mt-6 text-center">
                 <p>
                   Already have an account?{" "}
-                  <Link href="/signin" className="text-primary">
+                  <Link 
+                  href={!callbackUrl ? `/signin` : `/signin?callbackUrl=${callbackUrl}`}
+                  className="text-primary">
                     Sign in
                   </Link>
                 </p>
