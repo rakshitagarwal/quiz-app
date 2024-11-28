@@ -163,6 +163,12 @@ const ActiveQuiz = ({ id, title, description, questions, privacy }) => {
                             className={`cursor-pointer rounded p-3 hover:bg-gray-200 
                     ${selectedAnswerIndex === idx ? "bg-blue-100" : ""}`}
                           >
+                              <input
+                              type="checkbox"
+                              checked={selectedAnswerIndex === idx}
+                              readOnly
+                              className="mr-3"
+                            />
                             {answer}
                           </li>
                         ))}

@@ -1,5 +1,5 @@
 "use client";
-import { Quiz } from "@/types/quiz";
+
 import { getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -8,22 +8,29 @@ import { MdDelete, MdModeEditOutline } from "react-icons/md";
 
 const TableThree = () => {
   const router = useRouter()
-  const [quizes, setQuizes] = useState<Quiz[]>([]);
+  const [quizes, setQuizes] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false)
+  console.log("isAdmin", isAdmin);
 
   const getQuizes = async () => {
     try {
-      const session = await getSession();      
+      const session = await getSession()
       const res = await fetch("http://localhost:3000/api/quiz", {
         method: "PUT",
         headers: {
-            "Content-type": "application/json",
+          "Content-type": "application/json",
         },
         body: JSON.stringify({ user: session?.user }),
-    });
+      });
 
       if (!res.ok) {
         throw new Error("Failed to fetch quizzes");
       }
+      if (session) {
+        const loggedUser = session.user
+        if (loggedUser.role === "ADMIN") setIsAdmin(true)
+      }
+
       const { quizes } = await res.json();
       setQuizes(quizes);
       return;
@@ -36,7 +43,7 @@ const TableThree = () => {
     getQuizes();
   }, []);
 
-  const removeQuiz = async (id: string) => {
+  const removeQuiz = async (id) => {
     const confirmed = confirm("Are you sure?");
     if (confirmed) {
       const res = await fetch(`http://localhost:3000/api/quiz/${id}`, {
@@ -94,18 +101,20 @@ const TableThree = () => {
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
-                  <a target="_blank" href={`/quiz/${quiz._id}`} rel="noopener noreferrer">
-                    <button className="hover:text-primary">
+                    <button onClick={() => router.push(`/quiz/${quiz._id}`)} className="hover:text-primary">
                       <FaEye />
                     </button>
-                    </a>
-                    <button onClick={() => removeQuiz(quiz._id)} className="hover:text-primary">
-                      <MdDelete />
-                    </button>
+                    {isAdmin && (
+                  <div className="flex items-center space-x-3.5">
+                      <button onClick={() => removeQuiz(quiz._id)} className="hover:text-primary">
+                        <MdDelete />
+                      </button>
 
-                    <button onClick={() => router.push(`/quiz/edit/${quiz._id}`)} className="hover:text-primary">
-                      <MdModeEditOutline />
-                    </button>
+                      <button onClick={() => router.push(`/quiz/edit/${quiz._id}`)} className="hover:text-primary">
+                        <MdModeEditOutline />
+                      </button>
+                    </div>
+                    )}
                   </div>
                 </td>
               </tr>

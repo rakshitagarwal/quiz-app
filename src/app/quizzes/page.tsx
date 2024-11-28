@@ -14,7 +14,6 @@ export const metadata: Metadata = {
 const TablesPage = () => {
   return (
     <DefaultLayout>
-  
       <Link href={"/quiz/add"}>
         <button className="flex w-fit mt-10 justify-center rounded bg-primary p-2 font-medium text-gray hover:bg-opacity-90">
           Add Quiz

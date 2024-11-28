@@ -1,3 +1,4 @@
+import DefaultLayout from '@/components/Layouts/DefaultLayout';
 import ActiveQuiz from '../../../components/Quiz/ActiveQuiz'
 import { Metadata } from "next";
 
@@ -33,5 +34,9 @@ export default async function PlayQuiz({ params }: QuizViewParams) {
     const { quiz } = await getQuizById(id);
     const { title, description, questions, privacy } = quiz;
 
-    return <ActiveQuiz id={id} title={title} description={description} questions={questions} privacy={privacy} />
+    return (
+        <DefaultLayout>
+        <ActiveQuiz id={id} title={title} description={description} questions={questions} privacy={privacy} />
+        </DefaultLayout>
+    )
 }
