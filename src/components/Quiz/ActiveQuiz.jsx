@@ -139,7 +139,6 @@ const ActiveQuiz = ({ id, title, description, questions, privacy }) => {
               </div>
             )}
 
-
             {/* Main Content */}
             <div
               className={`${showResults ? "w-full" : " w-3/4"

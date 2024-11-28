@@ -86,7 +86,7 @@ export default function EditQuiz({ id, title, description, questions, privacy })
       });
 
       if (res.ok) {
-        router.push("/tables");
+        router.push("/quizzes");
         router.refresh()
       } else {
         throw new Error("Failed to update quiz");
@@ -238,7 +238,7 @@ export default function EditQuiz({ id, title, description, questions, privacy })
             </button>&nbsp;&nbsp;
             <button
               type="button"
-              onClick={() => router.push('/tables')}
+              onClick={() => router.push('/quizzes')}
               className="w-32 flex justify-center rounded bg-primary p-3 font-medium text-white hover:bg-opacity-90"
             >
               Cancel

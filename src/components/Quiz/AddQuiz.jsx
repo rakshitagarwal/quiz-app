@@ -81,7 +81,7 @@ export default function AddQuiz() {
             });
 
             if (res.ok) {
-                router.push("/tables");
+                router.push("/quizzes");
                 router.refresh();
             } else {
                 throw new Error("Failed to create a quiz");
@@ -234,7 +234,7 @@ export default function AddQuiz() {
                         &nbsp;&nbsp;
                         <button
                             type="button"
-                            onClick={() => router.push("/tables")}
+                            onClick={() => router.push("/quizzes")}
                             className="w-fit flex justify-center rounded bg-primary p-2 font-medium text-white hover:bg-opacity-90"
                         >
                             Cancel

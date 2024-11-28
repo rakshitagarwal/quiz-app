@@ -17,7 +17,8 @@ export type Question = {
 export type User = {
     name: string,
     username: string,
-    password: string
+    password: string,
+    role: string,
 }
 
 export type Analytics = {

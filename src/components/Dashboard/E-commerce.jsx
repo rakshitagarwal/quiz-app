@@ -28,6 +28,25 @@ const getData = async () => {
 
 const ECommerce = () => {
   const [quizes, setQuizes] = useState([]);
+
+  const processQuizes = (data) => {
+    const grouped = data.reduce((acc, quiz) => {
+      if (!acc[quiz.quiz]) {
+        acc[quiz.quiz] = {
+          ...quiz,
+          count: 1,
+        };
+      } else {
+        acc[quiz.quiz].count += 1;
+        acc[quiz.quiz].score += quiz.score;
+        acc[quiz.quiz].correctResponses += quiz.correctResponses;
+        acc[quiz.quiz].incorrectResponses += quiz.incorrectResponses;
+      }
+      return acc;
+    }, {});
+    return Object.values(grouped);
+  };
+
   const totalScore = quizes.reduce((acc, item) => acc + item.score, 0);
   const totalCorrectResponses = quizes.reduce((acc, item) => acc + item.correctResponses, 0);
   const totalIncorrectResponses = quizes.reduce((acc, item) => acc + item.incorrectResponses, 0);
@@ -40,10 +59,10 @@ const ECommerce = () => {
   useEffect(() => {
     async function fetchData() {
       const data = await getData();
-      setQuizes(data)
+      setQuizes(processQuizes(data));
     }
     fetchData();
-  }, [])
+  }, []);
 
   return (
     <>
@@ -70,13 +89,13 @@ const ECommerce = () => {
                   Count
                 </th>
                 <th className="min-w-[150px] px-4 py-4 font-medium text-black dark:text-white">
-                  Score
+                  Total Score
                 </th>
                 <th className="min-w-[120px] px-4 py-4 font-medium text-black dark:text-white">
-                  correctResponses
+                  Total Correct Responses
                 </th>
                 <th className="px-4 py-4 font-medium text-black dark:text-white">
-                  incorrectResponses
+                  Total Incorrect Responses
                 </th>
               </tr>
             </thead>
@@ -90,7 +109,7 @@ const ECommerce = () => {
                   </td>
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                     <p className="text-black dark:text-white">
-                      {quiz.status}
+                      {quiz.count}
                     </p>
                   </td>
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
