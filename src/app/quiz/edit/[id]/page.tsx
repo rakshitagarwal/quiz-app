@@ -1,5 +1,5 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import EditQuiz from "@/components/Quiz/QuizEdit";
+import EditQuiz from "@/components/Quiz/EditQuiz";
 import { Metadata } from "next";
 
 const getQuizById = async (id: string) => {

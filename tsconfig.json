@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/quiz/view/[id]/page.jsx", "src/components/Quiz/QuizEdit.jsx", "src/components/Dashboard/E-commerce.jsx", "src/components/Switchers/SwitcherThree.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/quiz/view/[id]/page.jsx", "src/components/Quiz/EditQuiz.jsx", "src/components/Dashboard/E-commerce.jsx", "src/components/Switchers/SwitcherThree.tsx"],
   "exclude": ["node_modules"]
 }
