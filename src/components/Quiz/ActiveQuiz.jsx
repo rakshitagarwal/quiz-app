@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 
-const ActiveQuiz = ({ id, title, description, questions, privacy }) => {
+const ActiveQuiz = ({ id, title, description, questions }) => {
   const router = useRouter();
   const pathname = usePathname();
   const passPercentage = 60;
@@ -26,8 +26,8 @@ const ActiveQuiz = ({ id, title, description, questions, privacy }) => {
     const userSession = async () => {
       setLoading(true);
       const session = await getSession();
-      if (!session && privacy) {
-        router.push(`/signin?callbackUrl=${encodeURIComponent(pathname)}`);
+      if (!session) {
+        router.push(`/signup?callbackUrl=${encodeURIComponent(pathname)}`);
       }
       setLoading(false);
     };

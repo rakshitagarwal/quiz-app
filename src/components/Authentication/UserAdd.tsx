@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const UserAdd = () => {
   const router = useRouter();
@@ -27,7 +28,9 @@ const UserAdd = () => {
       if (!res.ok) {
         setError("Invalid username or password");
       } else {
-        router.push("/signin");
+        toast.success('Signup successful!');
+        const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl");        
+        router.push(`/signin?callbackUrl=${encodeURIComponent(callbackUrl as string)}`);
       }
     } catch (err) {
       setError("Something went wrong. Please try again later.");

@@ -9,7 +9,6 @@ export default function AddQuiz() {
     const router = useRouter();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [isPrivate, setIsPrivate] = useState(false)
     const [questions, setQuestions] = useState([
         { question: "", questionType: "MCQ", answers: ["", ""], correctAnswer: "" },
     ]);
@@ -77,7 +76,7 @@ export default function AddQuiz() {
                 headers: {
                     "Content-type": "application/json",
                 },
-                body: JSON.stringify({ title, description, questions, user: session.user._id , privacy: isPrivate}),
+                body: JSON.stringify({ title, description, questions, user: session.user._id }),
             });
 
             if (res.ok) {
@@ -121,10 +120,6 @@ export default function AddQuiz() {
                             onChange={(e) => setDescription(e.target.value)}
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         ></textarea>
-                    </div>
-                    <div className="flex mb-4.5">
-                        <label className="py-1 block text-sm font-medium text-black dark:text-white">Private Quiz?</label>
-                        &nbsp;&nbsp;&nbsp;&nbsp; <SwitcherThree setIsPrivate={setIsPrivate} />
                     </div>
                     {questions.map((question, qIndex) => (
                         <div

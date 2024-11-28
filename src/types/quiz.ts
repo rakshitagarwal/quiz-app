@@ -4,7 +4,6 @@ export type Quiz = {
     description: string,
     questions: [],
     user: string,
-    privacy: boolean
 }
 
 export type Question = {

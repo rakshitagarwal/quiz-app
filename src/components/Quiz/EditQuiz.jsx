@@ -3,13 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSession } from "next-auth/react";
-import SwitcherThree from "../Switchers/SwitcherThree";
 
-export default function EditQuiz({ id, title, description, questions, privacy }) {
+export default function EditQuiz({ id, title, description, questions }) {
   const router = useRouter();
   const [quizTitle, setQuizTitle] = useState(title || "");
   const [quizDescription, setQuizDescription] = useState(description || "");
-  const [isPrivate, setIsPrivate] = useState(privacy)
   const [quizQuestions, setQuizQuestions] = useState(
     questions || [{ question: "", questionType: "MCQ", answers: ["", ""], correctAnswer: "" }]
   );
@@ -82,7 +80,7 @@ export default function EditQuiz({ id, title, description, questions, privacy })
         headers: {
           "Content-type": "application/json",
         },
-        body: JSON.stringify({ title: quizTitle, description: quizDescription, questions: quizQuestions, user: session.user._id, privacy: isPrivate }),
+        body: JSON.stringify({ title: quizTitle, description: quizDescription, questions: quizQuestions, user: session.user._id }),
       });
 
       if (res.ok) {
@@ -126,10 +124,6 @@ export default function EditQuiz({ id, title, description, questions, privacy })
               onChange={(e) => setQuizDescription(e.target.value)}
               className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
             ></textarea>
-          </div>
-          <div className="flex mb-4.5">
-            <label className="py-1 block text-sm font-medium text-black dark:text-white">Private Quiz?</label>
-            &nbsp;&nbsp;&nbsp;&nbsp; <SwitcherThree isPrivate={isPrivate} setIsPrivate={setIsPrivate} />
           </div>
           {quizQuestions.map((question, qIndex) => (
             <div

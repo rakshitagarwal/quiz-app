@@ -10,7 +10,6 @@ const TableThree = () => {
   const router = useRouter()
   const [quizes, setQuizes] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false)
-  console.log("isAdmin", isAdmin);
 
   const getQuizes = async () => {
     try {
@@ -30,7 +29,6 @@ const TableThree = () => {
         const loggedUser = session.user
         if (loggedUser.role === "ADMIN") setIsAdmin(true)
       }
-
       const { quizes } = await res.json();
       setQuizes(quizes);
       return;
@@ -67,11 +65,8 @@ const TableThree = () => {
               <th className="min-w-[150px] px-4 py-4 font-medium text-black dark:text-white">
                 Description
               </th>
-              <th className="min-w-[150px] px-4 py-4 font-medium text-black dark:text-white">
-                Private
-              </th>
               <th className="min-w-[120px] px-4 py-4 font-medium text-black dark:text-white">
-                Questions
+                Total Questions
               </th>
               <th className="px-4 py-4 font-medium text-black dark:text-white">
                 Action
@@ -89,11 +84,6 @@ const TableThree = () => {
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <p className="text-black dark:text-white">
                     {quiz.description}
-                  </p>
-                </td>
-                <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  <p className="text-black dark:text-white">
-                    {quiz.privacy ? "Yes" : "No"}
                   </p>
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
