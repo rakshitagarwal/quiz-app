@@ -11,13 +11,12 @@ export default function AddQuiz() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [isPrivate, setIsPrivate] = useState(false)
-    
     const [questions, setQuestions] = useState([
-        { question: "", answers: ["", ""], correctAnswer: "" },
+        { question: "", questionType: "MCQ", answers: ["", ""], correctAnswer: "" },
     ]);
 
     const handleAddQuestion = () => {
-        setQuestions([...questions, { question: "", answers: ["", ""], correctAnswer: "" }]);
+        setQuestions([...questions, { question: "", questionType: "MCQ", answers: ["", ""], correctAnswer: "" }]);
     };
 
     const handleRemoveQuestion = (index) => {
@@ -27,6 +26,10 @@ export default function AddQuiz() {
     const handleQuestionChange = (index, field, value) => {
         const updatedQuestions = [...questions];
         updatedQuestions[index][field] = value;
+        if (field === "questionType" && value === "TRUE/FALSE") {
+            updatedQuestions[index].answers = ["True", "False"];
+            updatedQuestions[index].correctAnswer = "";
+        }
         setQuestions(updatedQuestions);
     };
 
@@ -80,6 +83,7 @@ export default function AddQuiz() {
 
             if (res.ok) {
                 router.push("/tables");
+                router.refresh();
             } else {
                 throw new Error("Failed to create a quiz");
             }
@@ -120,8 +124,8 @@ export default function AddQuiz() {
                         ></textarea>
                     </div>
                     <div className="flex mb-4.5">
-                    <label className="py-1 block text-sm font-medium text-black dark:text-white">Private Quiz ?</label>
-                    &nbsp;&nbsp;&nbsp;&nbsp; <SwitcherThree setIsPrivate={setIsPrivate} />
+                        <label className="py-1 block text-sm font-medium text-black dark:text-white">Private Quiz?</label>
+                        &nbsp;&nbsp;&nbsp;&nbsp; <SwitcherThree setIsPrivate={setIsPrivate} />
                     </div>
                     {questions.map((question, qIndex) => (
                         <div
@@ -140,6 +144,19 @@ export default function AddQuiz() {
                             </div>
                             <div className="mb-4.5">
                                 <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                                    Question Type
+                                </label>
+                                <select
+                                    value={question.questionType}
+                                    onChange={(e) => handleQuestionChange(qIndex, "questionType", e.target.value)}
+                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                                >
+                                    <option value="MCQ">MCQ</option>
+                                    <option value="TRUE/FALSE">TRUE/FALSE</option>
+                                </select>
+                            </div>
+                            <div className="mb-4.5">
+                                <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                                     Choices
                                 </label>
                                 {question.answers.map((answer, aIndex) => (
@@ -150,17 +167,20 @@ export default function AddQuiz() {
                                             value={answer}
                                             onChange={(e) => handleAnswerChange(qIndex, aIndex, e.target.value)}
                                             className="flex-grow rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                                            disabled={question.questionType === "TRUE/FALSE"}
                                         />
-                                        <button
-                                            type="button"
-                                            onClick={() => handleRemoveAnswer(qIndex, aIndex)}
-                                            className="text-meta-1"
-                                        >
-                                            Remove
-                                        </button>
+                                        {question.questionType === "MCQ" && (
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveAnswer(qIndex, aIndex)}
+                                                className="text-meta-1"
+                                            >
+                                                Remove
+                                            </button>
+                                        )}
                                     </div>
                                 ))}
-                                {question.answers.length < 5 && (
+                                {question.questionType === "MCQ" && question.answers.length < 5 && (
                                     <button
                                         type="button"
                                         onClick={() => handleAddAnswer(qIndex)}
@@ -205,7 +225,6 @@ export default function AddQuiz() {
                             Add Question
                         </button>
                     )}
-                
                     <div className="flex flex-row">
                         <button
                             type="submit"
@@ -216,7 +235,7 @@ export default function AddQuiz() {
                         &nbsp;&nbsp;
                         <button
                             type="button"
-                            onClick={() => router.push('/tables')}
+                            onClick={() => router.push("/tables")}
                             className="w-fit flex justify-center rounded bg-primary p-2 font-medium text-white hover:bg-opacity-90"
                         >
                             Cancel

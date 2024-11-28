@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 const SwitcherThree = ({ isPrivate, setIsPrivate }: {isPrivate : boolean, setIsPrivate: (arg0: boolean) => void }) => {
-  const [enabled, setEnabled] = useState(isPrivate);
+  const [enabled, setEnabled] = useState(isPrivate || false);
 
   const changeHandler = () => {
     const newState = !enabled;

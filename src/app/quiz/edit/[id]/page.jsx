@@ -1,4 +1,4 @@
-import EditQuizForm from '../../../../components/Tables/QuizEdit'
+import EditQuizForm from '../../../../components/Quiz/QuizEdit'
 
 const getQuizById = async (id) => {
   try {

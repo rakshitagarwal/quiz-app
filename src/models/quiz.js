@@ -3,6 +3,11 @@ import mongoose, { Schema } from "mongoose";
 const QuestionSchema = new Schema(
   {
     question: { type: String, required: true },
+    questionType: {
+      type: String,
+      enum: ["MCQ", "TRUE/FALSE"],
+      required: true,
+    },
     answers: { type: [String], required: true },
     correctAnswer: { type: String, required: true },
   },

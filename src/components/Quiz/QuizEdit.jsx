@@ -7,18 +7,18 @@ import { getSession } from "next-auth/react";
 import SwitcherThree from "../Switchers/SwitcherThree";
 
 export default function EditQuizForm({ id, title, description, questions, privacy }) {
-  console.log("props",{ id, title, description, questions, privacy });
-  
   const router = useRouter();
   const [quizTitle, setQuizTitle] = useState(title || "");
   const [quizDescription, setQuizDescription] = useState(description || "");
-  const [quizQuestions, setQuizQuestions] = useState(questions || [{ question: "", answers: ["", ""], correctAnswer: "" }]);
   const [isPrivate, setIsPrivate] = useState(privacy)
+  const [quizQuestions, setQuizQuestions] = useState(
+    questions || [{ question: "", questionType: "MCQ", answers: ["", ""], correctAnswer: "" }]
+  );
 
   const handleAddQuestion = () => {
     setQuizQuestions([
       ...quizQuestions,
-      { question: "", answers: ["", ""], correctAnswer: "" },
+      { question: "", questionType: "MCQ", answers: ["", ""], correctAnswer: "" },
     ]);
   };
 
@@ -29,6 +29,12 @@ export default function EditQuizForm({ id, title, description, questions, privac
   const handleQuestionChange = (index, field, value) => {
     const updatedQuestions = [...quizQuestions];
     updatedQuestions[index][field] = value;
+
+    if (field === "questionType" && value === "TRUE/FALSE") {
+      updatedQuestions[index].answers = ["True", "False"];
+      updatedQuestions[index].correctAnswer = "";
+    }
+
     setQuizQuestions(updatedQuestions);
   };
 
@@ -77,7 +83,7 @@ export default function EditQuizForm({ id, title, description, questions, privac
         headers: {
           "Content-type": "application/json",
         },
-        body: JSON.stringify({ title: quizTitle, description: quizDescription, questions: quizQuestions, user: session.user._id, privacy: isPrivate}),
+        body: JSON.stringify({ title: quizTitle, description: quizDescription, questions: quizQuestions, user: session.user._id, privacy: isPrivate }),
       });
 
       if (res.ok) {
@@ -123,9 +129,9 @@ export default function EditQuizForm({ id, title, description, questions, privac
             ></textarea>
           </div>
           <div className="flex mb-4.5">
-                    <label className="py-1 block text-sm font-medium text-black dark:text-white">Private Quiz ?</label>
-                    &nbsp;&nbsp;&nbsp;&nbsp; <SwitcherThree isPrivate={isPrivate} setIsPrivate={setIsPrivate} />
-                    </div>
+            <label className="py-1 block text-sm font-medium text-black dark:text-white">Private Quiz?</label>
+            &nbsp;&nbsp;&nbsp;&nbsp; <SwitcherThree isPrivate={isPrivate} setIsPrivate={setIsPrivate} />
+          </div>
           {quizQuestions.map((question, qIndex) => (
             <div
               key={qIndex}
@@ -143,27 +149,43 @@ export default function EditQuizForm({ id, title, description, questions, privac
               </div>
               <div className="mb-4.5">
                 <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                  Question Type
+                </label>
+                <select
+                  value={question.questionType}
+                  onChange={(e) => handleQuestionChange(qIndex, "questionType", e.target.value)}
+                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                >
+                  <option value="MCQ">MCQ</option>
+                  <option value="TRUE/FALSE">TRUE/FALSE</option>
+                </select>
+              </div>
+              <div className="mb-4.5">
+                <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                   Choices
                 </label>
                 {question.answers.map((answer, aIndex) => (
-                  <div key={aIndex} className="flex w-[50%] items-center mb-2">
+                  <div key={aIndex} className="flex gap-4 items-center mb-2">
                     <input
                       type="text"
-                      placeholder={`Answer ${aIndex + 1}`}
+                      placeholder={`Choice ${aIndex + 1}`}
                       value={answer}
                       onChange={(e) => handleAnswerChange(qIndex, aIndex, e.target.value)}
-                      className="flex-grow rounded border-[1.5px] border-stroke bg-transparent px-1 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      className="flex-grow rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      disabled={question.questionType === "TRUE/FALSE"}
                     />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveAnswer(qIndex, aIndex)}
-                      className="text-meta-1 px-5"
-                    >
-                      Remove
-                    </button>
+                    {question.questionType === "MCQ" && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveAnswer(qIndex, aIndex)}
+                        className="text-meta-1"
+                      >
+                        Remove
+                      </button>
+                    )}
                   </div>
                 ))}
-                {question.answers.length < 5 && (
+                {question.questionType === "MCQ" && question.answers.length < 5 && (
                   <button
                     type="button"
                     onClick={() => handleAddAnswer(qIndex)}

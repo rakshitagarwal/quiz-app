@@ -1,4 +1,4 @@
-import ActiveQuiz from '../../../components/ActiveQuiz'
+import ActiveQuiz from '../../../components/Quiz/ActiveQuiz'
 
 const getQuizById = async (id) => {
     try {
