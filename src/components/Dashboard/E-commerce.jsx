@@ -1,6 +1,5 @@
 "use client";
 
-import CardDataStats from "../CardDataStats";
 import { getSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
@@ -24,61 +23,45 @@ const quizAnalytics = async () => {
   }
 };
 
-
 const ECommerce = () => {
-  const [quizes, setQuizes] = useState([]);
-
-  // const processQuizes = (data) => {
-  //   const grouped = data.reduce((acc, quiz) => {
-  //     if (!acc[quiz.quiz]) {
-  //       acc[quiz.quiz] = {
-  //         ...quiz,
-  //         count: 1,
-  //       };
-  //     } else {
-  //       acc[quiz.quiz].count += 1;
-  //       acc[quiz.quiz].score += quiz.score;
-  //       acc[quiz.quiz].correctResponses += quiz.correctResponses;
-  //       acc[quiz.quiz].incorrectResponses += quiz.incorrectResponses;
-  //     }
-  //     return acc;
-  //   }, {});
-  //   return Object.values(grouped);
-  // };
-
-  // const totalScore = quizes.reduce((acc, item) => acc + item.score, 0);
-  // const totalCorrectResponses = quizes.reduce((acc, item) => acc + item.correctResponses, 0);
-  // const totalIncorrectResponses = quizes.reduce((acc, item) => acc + item.incorrectResponses, 0);
-
-  // const numberOfEntries = quizes.length;
-  // const averageScore = Math.floor(totalScore / numberOfEntries)
-  // const averageCorrectResponses = Math.floor(totalCorrectResponses / numberOfEntries);
-  // const averageIncorrectResponses = Math.floor(totalIncorrectResponses / numberOfEntries);
+  const [quizzes, setQuizzes] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
       const data = await quizAnalytics();
-      setQuizes(data);
+
+      const groupedData = data.reduce((acc, quiz) => {
+        if (!acc[quiz.quizName]) {
+          acc[quiz.quizName] = {
+            quizName: quiz.quizName,
+            totalScore: 0,
+            totalCorrectResponses: 0,
+            totalIncorrectResponses: 0,
+            count: 0,
+          };
+        }
+        acc[quiz.quizName].totalScore += quiz.score;
+        acc[quiz.quizName].totalCorrectResponses += quiz.correctResponses;
+        acc[quiz.quizName].totalIncorrectResponses += quiz.incorrectResponses;
+        acc[quiz.quizName].count += 1;
+        return acc;
+      }, {});
+
+      const result = Object.values(groupedData).map((quiz) => ({
+        quizName: quiz.quizName,
+        avgScore: (quiz.totalScore / quiz.count).toFixed(2),
+        avgCorrectResponses: (quiz.totalCorrectResponses / quiz.count).toFixed(2),
+        avgIncorrectResponses: (quiz.totalIncorrectResponses / quiz.count).toFixed(2),
+        totalCount: quiz.count
+      }));
+
+      setQuizzes(result);
     }
     fetchData();
   }, []);
 
-  console.log("quizes",quizes);
-  
-
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5 mb-3">
-        {/* <CardDataStats title="Average Score" total={averageScore}  >
-        </CardDataStats>
-        <CardDataStats title="Average Correct Responses" total={averageCorrectResponses}  >
-        </CardDataStats>
-        <CardDataStats title="Average Incorrect Responses" total={averageIncorrectResponses}  >
-        </CardDataStats>
-        <CardDataStats title="Total Entries" total={numberOfEntries}  >
-        </CardDataStats> */}
-      </div>
-
       <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="max-w-full overflow-x-auto">
           <table className="w-full table-auto">
@@ -87,46 +70,46 @@ const ECommerce = () => {
                 <th className="min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
                   Quiz
                 </th>
-                <th className="min-w-[150px] px-4 py-4 font-medium text-black dark:text-white">
-                  Count
+                <th className="min-w-[220px] px-0 py-4 font-medium text-black dark:text-white xl:pl-11">
+                  Played
                 </th>
                 <th className="min-w-[150px] px-4 py-4 font-medium text-black dark:text-white">
-                  Total Score
+                  Average Score
                 </th>
                 <th className="min-w-[120px] px-4 py-4 font-medium text-black dark:text-white">
-                  Total Correct Responses
+                  Average Correct Responses
                 </th>
                 <th className="px-4 py-4 font-medium text-black dark:text-white">
-                  Total Incorrect Responses
+                  Average Incorrect Responses
                 </th>
               </tr>
             </thead>
             <tbody>
-              {quizes.map((quiz, key) => (
+              {quizzes.map((quiz, key) => (
                 <tr key={key}>
                   <td className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
                     <h5 className="font-medium text-black dark:text-white">
                       {quiz.quizName}
                     </h5>
                   </td>
-                  <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
+                  <td className="border-b border-[#eee] pl-10 py-5 dark:border-strokedark">
                     <p className="text-black dark:text-white">
-                      {quiz.count}
+                      {quiz.totalCount}
                     </p>
                   </td>
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                     <p className="text-black dark:text-white">
-                      {quiz.score}
+                      {quiz.avgScore}
                     </p>
                   </td>
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                     <p className="text-black dark:text-white">
-                      {quiz.correctResponses}
+                      {quiz.avgCorrectResponses}
                     </p>
                   </td>
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                     <p className="text-black dark:text-white">
-                      {quiz.incorrectResponses}
+                      {quiz.avgIncorrectResponses}
                     </p>
                   </td>
                 </tr>

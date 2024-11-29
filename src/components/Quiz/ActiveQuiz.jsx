@@ -26,8 +26,10 @@ const ActiveQuiz = ({ quizId, entryId, createdBy, title, description, questions 
       const session = await getSession();
       if (!session) {
         router.push(`/signup?callbackUrl=${encodeURIComponent(pathname)}`);
+      } else {
+        router.refresh();
+        setUserSession(session)
       }
-      setUserSession(session)
     };
     userSession();
   }, []);
@@ -94,13 +96,12 @@ const ActiveQuiz = ({ quizId, entryId, createdBy, title, description, questions 
       console.error(error);
     }
   };
-
+  
   useEffect(() => {
     if (showResults) updateEntry();
   }, [showResults]);
 
-  const progressPercentage =
-    ((currentQuestionIndex + 1) / questions.length) * 100;
+  const progressPercentage = ( attemptedQuestions.length / questions.length) * 100;
 
   return (
     <>

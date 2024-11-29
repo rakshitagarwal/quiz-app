@@ -31,20 +31,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     {
       name: "MENU",
       menuItems: [
-        {
-          icon: (
-            <FaEye />
-          ),
-          label: "Dashboard",
-          route: "#",
-          children: [{ label: "Quiz Analytics", route: "/" }],
-        },
+        
         {
           icon: (
             <FaEye />
           ),
           label: "Calendar",
           route: "/calendar",
+        },
+        {
+          icon: (
+            <FaEye />
+          ),
+          label: "Dashboard",
+          route: "#",
+          children: [userRole === "ADMIN" ?{ label: "Quiz Analytics", route: "/" }: { label: "QPlays", route: "/profile" }],
         },
         {
           icon: (
