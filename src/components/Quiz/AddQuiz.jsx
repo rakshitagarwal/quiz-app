@@ -9,6 +9,8 @@ export default function AddQuiz() {
     const router = useRouter();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [timer, setTimer] = useState(5);
+    const [result, setResult] = useState(false);
     const [activeTab, setActiveTab] = useState(1);
 
     const [questions, setQuestions] = useState([
@@ -51,7 +53,7 @@ export default function AddQuiz() {
         const updatedQuestions = [...questions];
         updatedQuestions[qIndex].answers = updatedQuestions[qIndex].answers.filter((_, i) => i !== aIndex);
         if (updatedQuestions[qIndex].correctAnswer === updatedQuestions[qIndex].answers[aIndex]) {
-            updatedQuestions[qIndex].correctAnswer = ""; // Clear correctAnswer if removed
+            updatedQuestions[qIndex].correctAnswer = "";
         }
         setQuestions(updatedQuestions);
     };
@@ -78,7 +80,7 @@ export default function AddQuiz() {
                 headers: {
                     "Content-type": "application/json",
                 },
-                body: JSON.stringify({ title, description, questions, createdBy: session.user._id }),
+                body: JSON.stringify({ title, description, showResult: result, quizDuration: timer, questions, createdBy: session.user._id }),
             });
 
             if (res.ok) {
@@ -137,6 +139,21 @@ export default function AddQuiz() {
                                 onChange={(e) => setDescription(e.target.value)}
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                             ></textarea>
+                        </div>
+                        <div className="mb-4.5">
+                            <label className="mb-3 block text-sm font-medium text-black dark:text-white">Quiz Duration</label>
+                            <input
+                                type="text"
+                                placeholder="Enter quiz title"
+                                value={timer}
+                                onChange={(e) => setTimer(e.target.value)}
+                                className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                                required
+                            />
+                        </div>
+                        <div className="flex mb-4.5">
+                            <label className="py-2 block text-sm font-medium text-black dark:text-white">Show Results</label>
+                            &nbsp;&nbsp;&nbsp;<SwitcherThree {...{result, setResult}}/>
                         </div>
                     </div>
                 )}

@@ -18,11 +18,13 @@ const QuizSchema = new Schema(
   {
     title: { type: String, required: true },
     description: { type: String },
+    showResult: { type: Boolean, default: false },
+    quizDuration: { type: Number, default: 5 },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     questions: {
       type: [QuestionSchema],
       validate: [arrayLimit, "{PATH} exceeds the limit of 50"],
     },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },
   {
     timestamps: true,

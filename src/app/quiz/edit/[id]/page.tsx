@@ -31,16 +31,13 @@ type QuizEditParams = {
 export default async function QuizEdit({ params }: QuizEditParams) {
   const { id } = params;  
   const { quiz } = await getQuizById(id);
-  const { title, description, questions } = quiz;
 
   return (
     <>
       <DefaultLayout>
         <EditQuiz
           id={id}
-          title={title}
-          description={description}
-          questions={questions}
+          quiz={quiz}
         />
       </DefaultLayout>
     </>

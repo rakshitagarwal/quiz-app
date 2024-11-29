@@ -4,9 +4,9 @@ import Quiz from "../../../models/quiz";
 import connectMongoDB from "../../../lib/mongo";
 
 export async function POST(request) {
-  const { title, description, questions, createdBy } = await request.json();
-  await connectMongoDB();  
-  await Quiz.create({ title, description, questions, createdBy});
+  const { title, description, showResult, quizDuration, questions, createdBy } = await request.json();
+  await connectMongoDB();
+  await Quiz.create({ title, description, showResult, quizDuration, questions, createdBy });
   return NextResponse.json({ message: "Quiz Created" }, { status: 201 });
 }
 
