@@ -2,9 +2,10 @@
 
 import { getSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import Countdown from "react-countdown";
 
-const ActiveQuiz = ({ quizId, entryId, createdBy, title, description, questions }) => {  
+const ActiveQuiz = ({ entryId, quiz }) => {
   const router = useRouter();
   const pathname = usePathname();
   const passPercentage = 60;
@@ -13,7 +14,7 @@ const ActiveQuiz = ({ quizId, entryId, createdBy, title, description, questions 
   const [answerChecked, setAnswerChecked] = useState(false);
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState(null);
   const [userSession, setUserSession] = useState(null);
-  const [showResults, setShowResults] = useState(false);
+  const [showReport, setShowReport] = useState(false);
   const [attemptedQuestions, setAttemptedQuestions] = useState([]);
   const [quizResult, setQuizResult] = useState({
     score: 0,
@@ -34,8 +35,9 @@ const ActiveQuiz = ({ quizId, entryId, createdBy, title, description, questions 
     userSession();
   }, []);
 
-  const { question, answers, correctAnswer } = questions[currentQuestionIndex];
-  const percentage = (quizResult.score / questions.length) * 100;
+  const quizEndTime = useMemo(() => Date.now() + quiz.quizDuration * 60 * 1000, []);
+  const { question, answers, correctAnswer } = quiz.questions[currentQuestionIndex];
+  const percentage = (quizResult.score / quiz.questions.length) * 100;
   const status = percentage >= passPercentage ? "Pass" : "Fail";
 
   const onAnswerSelected = (answer, idx) => {
@@ -60,10 +62,10 @@ const ActiveQuiz = ({ quizId, entryId, createdBy, title, description, questions 
         wrongAnswers: prev.wrongAnswers + 1,
       }));
     }
-    if (currentQuestionIndex !== questions.length - 1) {
+    if (currentQuestionIndex !== quiz.questions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
     } else {
-      setShowResults(true);
+      setShowReport(true);
     }
     setSelectedAnswer("");
     setSelectedAnswerIndex(null);
@@ -79,14 +81,14 @@ const ActiveQuiz = ({ quizId, entryId, createdBy, title, description, questions 
         },
         body: JSON.stringify({
           id: entryId,
-          quiz: quizId,
-          quizName: title,
+          quiz: quiz._id,
+          quizName: quiz.title,
           playedBy: userSession.user._id,
-          createdBy,
+          createdBy: quiz.createdBy,
           score: quizResult.score,
           correctResponses: quizResult.correctAnswers,
           incorrectResponses: quizResult.wrongAnswers,
-          status,
+          status: status,
         }),
       });
       if (!res.ok) {
@@ -96,38 +98,43 @@ const ActiveQuiz = ({ quizId, entryId, createdBy, title, description, questions 
       console.error(error);
     }
   };
-  
-  useEffect(() => {
-    if (showResults) updateEntry();
-  }, [showResults]);
 
-  const progressPercentage = ( attemptedQuestions.length / questions.length) * 100;
+  useEffect(() => {
+    if (showReport) updateEntry();
+  }, [showReport]);
+
+  const progressPercentage = (attemptedQuestions.length / quiz.questions.length) * 100;
 
   return (
     <>
       <div className="flex flex-col items-center">
-        <h1 className="mb-4 mt-5 text-3xl font-bold">{title}</h1>
-        <p className="mb-6 text-lg">{description}</p>
+        <h1 className="mb-4 mt-5 text-3xl font-bold">{quiz.title}</h1>
+        <p className="mb-6 text-lg">{quiz.description}</p>
+        {!showReport && (
+          <Countdown
+            date={quizEndTime}
+            onComplete={() => setShowReport(true)}
+          />
+        )}
       </div>
       <div className="container mx-auto mt-5 flex w-[80%]">
         {/* Sidebar */}
-        {!showResults && (
+        {!showReport && (
           <div className="w-1/4 p-4 ">
             <div className="rounded-lg bg-gray-100 p-4 shadow-md">
               <h3 className="mb-3 text-lg font-bold">Navigate to questions</h3>
               <ul className="grid grid-cols-2 gap-2">
-                {questions.map((_, idx) => (
+                {quiz.questions.map((_, idx) => (
                   <li
                     key={idx}
                     onClick={() => setCurrentQuestionIndex(idx)}
                     className={`cursor-pointer rounded p-2 text-center 
-              ${
-                currentQuestionIndex === idx
-                  ? "bg-blue-500 text-white"
-                  : attemptedQuestions.includes(idx)
-                    ? "bg-green-300 hover:bg-green-400"
-                    : "bg-gray-200 hover:bg-gray-300"
-              }`}
+              ${currentQuestionIndex === idx
+                        ? "bg-blue-500 text-white"
+                        : attemptedQuestions.includes(idx)
+                          ? "bg-green-300 hover:bg-green-400"
+                          : "bg-gray-200 hover:bg-gray-300"
+                      }`}
                   >
                     {idx + 1}
                   </li>
@@ -139,12 +146,11 @@ const ActiveQuiz = ({ quizId, entryId, createdBy, title, description, questions 
 
         {/* Main Content */}
         <div
-          className={`${
-            showResults ? "w-full" : " w-3/4"
-          } px-4 transition-all duration-300`}
+          className={`${showReport ? "w-full" : " w-3/4"
+            } px-4 transition-all duration-300`}
         >
           <div>
-            {!showResults ? (
+            {!showReport ? (
               <>
                 <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
                   <div
@@ -177,14 +183,13 @@ const ActiveQuiz = ({ quizId, entryId, createdBy, title, description, questions 
                       <button
                         onClick={handleNextQuestion}
                         className={`rounded bg-blue-500 px-4 py-2 text-white 
-                                ${
-                                  !answerChecked
-                                    ? "cursor-not-allowed opacity-50"
-                                    : ""
-                                }`}
+                                ${!answerChecked
+                            ? "cursor-not-allowed opacity-50"
+                            : ""
+                          }`}
                         disabled={!answerChecked}
                       >
-                        {currentQuestionIndex === questions.length - 1
+                        {currentQuestionIndex === quiz.questions.length - 1
                           ? "Submit"
                           : "Next Question"}
                       </button>
@@ -194,14 +199,14 @@ const ActiveQuiz = ({ quizId, entryId, createdBy, title, description, questions 
               </>
             ) : (
               <div className="rounded-lg bg-white p-6 shadow-lg">
-                <h3 className="mb-4 text-2xl">Quiz Results</h3>
-                <table className="min-w-full table-auto">
+                <h3 className="mb-4 text-2xl">Quiz Ended</h3>
+                {quiz.showResult && (<table className="min-w-full table-auto">
                   <tbody>
                     <tr>
                       <td className="px-4 py-2 font-semibold">
                         Total Questions:
                       </td>
-                      <td className="px-4 py-2">{questions.length}</td>
+                      <td className="px-4 py-2">{quiz.questions.length}</td>
                     </tr>
                     <tr>
                       <td className="px-4 py-2 font-semibold">Total Score:</td>
@@ -228,7 +233,7 @@ const ActiveQuiz = ({ quizId, entryId, createdBy, title, description, questions 
                       <td className="px-4 py-2">{status}</td>
                     </tr>
                   </tbody>
-                </table>
+                </table>)}
               </div>
             )}
           </div>

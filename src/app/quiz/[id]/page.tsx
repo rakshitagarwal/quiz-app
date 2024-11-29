@@ -95,13 +95,12 @@ export default async function PlayQuiz({ params }: QuizViewParams) {
   const session = await getServerSession(options);
   const { id } = params;
   const { quiz } = await getQuizById(id);
-  const { title, description, questions, createdBy } = quiz;
   let analyticsId;
   if (session?.user?.role === "STUDENT") {
-    const entryId = await findEntry(id,createdBy, session?.user?._id as string);
+    const entryId = await findEntry(id,quiz.createdBy, session?.user?._id as string);
 
     if (!entryId) {
-      await addEntry(id, createdBy,title, session?.user?._id as string);
+      await addEntry(id, quiz.createdBy, quiz.title, session?.user?._id as string);
     }
     analyticsId = entryId;
   }
@@ -109,12 +108,8 @@ export default async function PlayQuiz({ params }: QuizViewParams) {
   return (
     <DefaultLayout>
       <ActiveQuiz
-        quizId={id}
         entryId={analyticsId}
-        title={title}
-        createdBy={createdBy}
-        description={description}
-        questions={questions}
+        quiz={quiz}
       />
     </DefaultLayout>
   );
