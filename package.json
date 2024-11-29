@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@cyntler/react-doc-viewer": "^1.17.0",
     "apexcharts": "^3.45.2",
     "classnames": "^2.5.1",
     "flatpickr": "^4.6.13",

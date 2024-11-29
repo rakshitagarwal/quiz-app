@@ -13,11 +13,18 @@ export const metadata: Metadata = {
 const TablesPage = () => {
   return (
     <DefaultLayout>
-      <Link href={"/quiz/add"}>
-        <button className="flex w-fit mt-10 justify-center rounded bg-primary p-2 font-medium text-gray hover:bg-opacity-90">
-          Add Quiz
-        </button>
-      </Link>
+      <div>
+        <Link href={"/quiz/add"}>
+          <button className="flex w-fit mt-10 justify-center rounded bg-primary p-2 font-medium text-gray hover:bg-opacity-90">
+            Add Quiz
+          </button>
+        </Link>
+        <Link href={"/quiz/pdf"}>
+          <button className="flex w-fit mt-10 justify-center rounded bg-primary p-2 font-medium text-gray hover:bg-opacity-90">
+            Show PDF
+          </button>
+        </Link>
+      </div>
       <div className="flex flex-col gap-10 mt-4">
         <TableThree />
       </div>
