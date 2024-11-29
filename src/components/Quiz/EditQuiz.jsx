@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSession } from "next-auth/react";
 import SwitcherThree from "../Switchers/SwitcherThree";
+import { IoMdAddCircleOutline } from "react-icons/io";
+import { IoRemoveCircleOutline } from "react-icons/io5";
+import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 
 export default function EditQuiz({ id, quiz }) {
   const router = useRouter();
@@ -12,39 +15,43 @@ export default function EditQuiz({ id, quiz }) {
   const [timer, setTimer] = useState(quiz.quizDuration || 5);
   const [result, setResult] = useState(quiz.showResult || false);
   const [activeTab, setActiveTab] = useState(1);
-
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [quizQuestions, setQuizQuestions] = useState(
     quiz.questions || [{ question: "", questionType: "MCQ", answers: ["", ""], correctAnswer: "" }]
   );
 
   const handleAddQuestion = () => {
-    setQuizQuestions([
-      ...quizQuestions,
-      { question: "", questionType: "MCQ", answers: ["", ""], correctAnswer: "" },
-    ]);
+    const newQuestion = {
+      question: "",
+      questionType: "MCQ",
+      answers: ["", "", "", ""],
+      correctAnswer: "",
+    };
+    setQuizQuestions([...quizQuestions, newQuestion]);
+    setCurrentQuestionIndex(quizQuestions.length);
   };
 
   const handleRemoveQuestion = (index) => {
-    setQuizQuestions(quizQuestions.filter((_, i) => i !== index));
+    const updatedQuestions = quizQuestions.filter((_, i) => i !== index);
+    setQuizQuestions(updatedQuestions);
+
+    if (currentQuestionIndex >= updatedQuestions.length) {
+      setCurrentQuestionIndex(updatedQuestions.length - 1);
+    }
   };
 
   const handleQuestionChange = (index, field, value) => {
     const updatedQuestions = [...quizQuestions];
     updatedQuestions[index][field] = value;
-  
-    if (field === "questionType") {
-      if (value === "TRUE/FALSE") {
-        updatedQuestions[index].answers = ["True", "False"];
-        updatedQuestions[index].correctAnswer = "";
-      }
-  
-      if (value === "MCQ") {
-        updatedQuestions[index].answers = ["", "", "", ""]; 
-        updatedQuestions[index].correctAnswer = "";
-      }
+    if (field === "questionType" && value === "TRUE/FALSE") {
+      updatedQuestions[index].answers = ["True", "False"];
+      updatedQuestions[index].correctAnswer = "";
+    } else if (field === "questionType" && value === "MCQ") {
+      updatedQuestions[index].answers = ["", "", "", ""];
+      updatedQuestions[index].correctAnswer = "";
     }
     setQuizQuestions(updatedQuestions);
-  };  
+  }; 
 
   const handleAnswerChange = (qIndex, aIndex, value) => {
     const updatedQuestions = [...quizQuestions];
@@ -52,21 +59,14 @@ export default function EditQuiz({ id, quiz }) {
     setQuizQuestions(updatedQuestions);
   };
 
-  const handleAddAnswer = (qIndex) => {
-    const updatedQuestions = [...quizQuestions];
-    if (updatedQuestions[qIndex].answers.length < 5) {
-      updatedQuestions[qIndex].answers.push("");
-      setQuizQuestions(updatedQuestions);
-    }
-  };
-
-  const handleRemoveAnswer = (qIndex, aIndex) => {
-    const updatedQuestions = [...quizQuestions];
-    updatedQuestions[qIndex].answers = updatedQuestions[qIndex].answers.filter((_, i) => i !== aIndex);
-    if (updatedQuestions[qIndex].correctAnswer === updatedQuestions[qIndex].answers[aIndex]) {
-      updatedQuestions[qIndex].correctAnswer = "";
-    }
-    setQuizQuestions(updatedQuestions);
+  const handleNavigation = (direction) => {
+    setCurrentQuestionIndex((prevIndex) => {
+      if (direction === "next") {
+        return Math.min(prevIndex + 1, quizQuestions.length - 1);
+      } else if (direction === "prev") {
+        return Math.max(prevIndex - 1, 0);
+      }
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -98,7 +98,7 @@ export default function EditQuiz({ id, quiz }) {
         router.push("/quizzes");
         router.refresh();
       } else {
-        throw new Error("Failed to update quiz");
+        throw new Error("Failed to edit quiz");
       }
     } catch (error) {
       console.error(error);
@@ -112,26 +112,25 @@ export default function EditQuiz({ id, quiz }) {
       </div>
       <div className="flex border-b border-stroke">
         <button
-          className={`flex-1 py-2 ${activeTab === 1 ? 'bg-primary text-white' : 'text-black dark:text-white'}`}
+          className={`flex-1 py-2 ${activeTab === 1 ? "bg-primary text-white" : "text-black dark:text-white"}`}
           onClick={() => setActiveTab(1)}
         >
           Quiz Settings
         </button>
         <button
-          className={`flex-1 py-2 ${activeTab === 2 ? 'bg-primary text-white' : 'text-black dark:text-white'}`}
+          className={`flex-1 py-2 ${activeTab === 2 ? "bg-primary text-white" : "text-black dark:text-white"}`}
           onClick={() => setActiveTab(2)}
         >
-          Add Questions
+          Questions
         </button>
       </div>
-      <form
-        onSubmit={handleSubmit}
-        className="p-6.5"
-      >
+      <form onSubmit={handleSubmit} className="p-6.5">
         {activeTab === 1 && (
           <div>
             <div className="mb-4.5">
-              <label className="mb-3 block text-sm font-medium text-black dark:text-white">Quiz Title</label>
+              <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                Quiz Title
+              </label>
               <input
                 type="text"
                 placeholder="Enter quiz title"
@@ -142,7 +141,9 @@ export default function EditQuiz({ id, quiz }) {
               />
             </div>
             <div className="mb-4.5">
-              <label className="mb-3 block text-sm font-medium text-black dark:text-white">Quiz Description</label>
+              <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                Quiz Description
+              </label>
               <textarea
                 rows={3}
                 placeholder="Enter quiz description"
@@ -152,7 +153,9 @@ export default function EditQuiz({ id, quiz }) {
               ></textarea>
             </div>
             <div className="mb-4.5">
-              <label className="mb-3 block text-sm font-medium text-black dark:text-white">Quiz Duration</label>
+              <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                Quiz Duration
+              </label>
               <input
                 type="text"
                 placeholder="Enter quiz duration"
@@ -162,29 +165,76 @@ export default function EditQuiz({ id, quiz }) {
                 required
               />
             </div>
-            <div className="flex mb-4.5">
-              <label className="py-2 block text-sm font-medium text-black dark:text-white">Show Results</label>
-              &nbsp;&nbsp;&nbsp;<SwitcherThree {...{result, setResult}} />
+            <div className="mb-4.5 flex">
+              <label className="block py-2 text-sm font-medium text-black dark:text-white">
+                Show Results
+              </label>
+              &nbsp;&nbsp;&nbsp;
+              <SwitcherThree {...{ result, setResult }} />
             </div>
           </div>
         )}
         {activeTab === 2 && (
-          <div>
-            {quizQuestions.map((question, qIndex) => (
+          <>
+            {quizQuestions.length < 50 && (
+              <div className="flex justify-between">
+                <button
+                  type="button"
+                  onClick={handleAddQuestion}
+                  className="mb-4 flex w-fit justify-center rounded p-2 font-medium text-white hover:bg-opacity-90"
+                >
+                  <IoMdAddCircleOutline size={32} />
+                </button>
+                <div className="flex">
+                  <button
+                    type="button"
+                    onClick={() => handleNavigation("prev")}
+                    className={`text-primary ${currentQuestionIndex === 0 ? "opacity-50" : ""}`}
+                    disabled={currentQuestionIndex === 0}
+                  >
+                    <FaAngleLeft size={32} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleNavigation("next")}
+                    className={`text-primary ${
+                      currentQuestionIndex === quizQuestions.length - 1
+                        ? "opacity-50"
+                        : ""
+                    }`}
+                    disabled={currentQuestionIndex === quizQuestions.length - 1}
+                  >
+                    <FaAngleRight size={32} />
+                  </button>
+                </div>
+              </div>
+            )}
+            {quizQuestions.length > 0 && (
               <div
-                key={qIndex}
-                className="border border-stroke bg-white p-4 mb-4 dark:border-strokedark dark:bg-boxdark rounded"
+              key={currentQuestionIndex}
+                className="mb-4 rounded border border-stroke bg-white p-4 dark:border-strokedark dark:bg-boxdark"
               >
+                <button
+                  type="button"
+                  onClick={() => handleRemoveQuestion(currentQuestionIndex)}
+                  className="mb-2 text-meta-1"
+                >
+                  <IoRemoveCircleOutline size="2rem" />
+                </button>
                 {/* Question fields */}
                 <div className="mb-4.5">
-                  <label className="mb-3 block text-sm font-medium text-black dark:text-white">Question</label>
+                  <label className="mb-3 block text-sm font-medium text-black dark:text-white dark:border-strokedark dark:bg-boxdar">
+                  Question {currentQuestionIndex + 1}/{quizQuestions.length}
+                  </label>
                   <input
-                    type="text"
-                    placeholder="Enter question text"
-                    value={question.question}
-                    onChange={(e) => handleQuestionChange(qIndex, "question", e.target.value)}
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  />
+                        type="text"
+                        placeholder="Enter question text"
+                        value={quizQuestions[currentQuestionIndex].question}
+                        onChange={(e) =>
+                            handleQuestionChange(currentQuestionIndex, "question", e.target.value)
+                        }
+                        className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
                 </div>
                 {/* Question type */}
                 <div className="mb-4.5">
@@ -192,32 +242,34 @@ export default function EditQuiz({ id, quiz }) {
                     Question Type
                   </label>
                   <select
-                    value={question.questionType}
-                    onChange={(e) => handleQuestionChange(qIndex, "questionType", e.target.value)}
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  >
-                    <option value="MCQ">MCQ</option>
-                    <option value="TRUE/FALSE">TRUE/FALSE</option>
-                  </select>
+                        value={quizQuestions[currentQuestionIndex].questionType}
+                        onChange={(e) =>
+                            handleQuestionChange(currentQuestionIndex, "questionType", e.target.value)
+                        }
+                        className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        >
+                        <option value="MCQ">MCQ</option>
+                        <option value="TRUE/FALSE">TRUE/FALSE</option>
+                    </select>
                 </div>
                 {/* Choices */}
                 <div className="mb-4.5">
                   <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                     Choices
                   </label>
-                  {question.answers.map((answer, aIndex) => (
-    <div key={aIndex} className="flex gap-4 items-center mb-2">
-      <input
-        type="text"
-        placeholder={`Choice ${aIndex + 1}`}
-        value={answer}
-        onChange={(e) => handleAnswerChange(qIndex, aIndex, e.target.value)}
-        className="flex-grow rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-        disabled={question.questionType === "TRUE/FALSE"}
-      />     
-    </div>
-  ))}
-                   
+                  {quizQuestions[currentQuestionIndex].answers.map((answer, aIndex) => (
+                        <input
+                            key={aIndex}
+                            type="text"
+                            placeholder={`Choice ${aIndex + 1}`}
+                            value={answer}
+                            onChange={(e) =>
+                                handleAnswerChange(currentQuestionIndex, aIndex, e.target.value)
+                            }
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                            disabled={quizQuestions[currentQuestionIndex].questionType === "TRUE/FALSE"}
+                        />
+                    ))}
                 </div>
                 {/* Correct Answer */}
                 <div className="mb-4.5">
@@ -225,42 +277,33 @@ export default function EditQuiz({ id, quiz }) {
                     Correct Answer
                   </label>
                   <select
-                    value={question.correctAnswer}
-                    onChange={(e) => handleQuestionChange(qIndex, "correctAnswer", e.target.value)}
-                    className="w-fit rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  >
-                    <option value="">Select Correct Answer</option>
-                    {question.answers.map((answer, aIndex) => (
-                      <option key={aIndex} value={answer}>
-                        {answer || `Answer ${aIndex + 1}`}
-                      </option>
-                    ))}
-                  </select>
+                        value={quizQuestions[currentQuestionIndex].correctAnswer}
+                        onChange={(e) =>
+                            handleQuestionChange(
+                                currentQuestionIndex,
+                                "correctAnswer",
+                                e.target.value,
+                            )
+                        }
+                        className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        >
+                        <option value="">Select Correct Answer</option>
+                        {quizQuestions[currentQuestionIndex].answers.map((answer, aIndex) => (
+                            <option key={aIndex} value={answer}>
+                                {answer || `Choice ${aIndex + 1}`}
+                            </option>
+                        ))}
+                    </select>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveQuestion(qIndex)}
-                  className="mt-4 text-meta-1"
-                >
-                  Remove Question
-                </button>
-              </div>
-            ))}
-            {quizQuestions.length < 50 && (
-              <button
-                type="button"
-                onClick={handleAddQuestion}
-                className="mb-4 w-fit flex justify-center rounded bg-primary p-2 font-medium text-white hover:bg-opacity-90"
-              >
-                Add Question
-              </button>
+                </div>
             )}
-          </div>
+       
+          </>
         )}
         <div className="flex flex-row">
           <button
             type="submit"
-            className="w-fit flex justify-center rounded bg-green-600 p-2 font-medium text-white hover:bg-opacity-90"
+            className="flex w-fit justify-center rounded bg-green-600 p-2 font-medium text-white hover:bg-opacity-90"
           >
             Update Quiz
           </button>
@@ -268,7 +311,7 @@ export default function EditQuiz({ id, quiz }) {
           <button
             type="button"
             onClick={() => router.push("/quizzes")}
-            className="w-fit flex justify-center rounded bg-primary p-2 font-medium text-white hover:bg-opacity-90"
+            className="flex w-fit justify-center rounded bg-primary p-2 font-medium text-white hover:bg-opacity-90"
           >
             Cancel
           </button>

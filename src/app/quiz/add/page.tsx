@@ -9,10 +9,8 @@ export const metadata: Metadata = {
 
 export default function QuizAdd() {
   return (
-    <>
-      <DefaultLayout>
-        <AddQuiz />
-      </DefaultLayout>
-    </>
+    <DefaultLayout>
+      <AddQuiz />
+    </DefaultLayout>
   );
 }
