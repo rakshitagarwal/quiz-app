@@ -45,7 +45,10 @@ const QuizAccess = () => {
                 Quiz Available
               </th>
               <th className="min-w-[150px] px-4 py-4 font-medium text-black dark:text-white">
-                status
+                Status
+              </th>
+              <th className="min-w-[150px] px-4 py-4 font-medium text-black dark:text-white">
+                Score
               </th>
               <th className="px-4 py-4 font-medium text-black dark:text-white">
                 Action
@@ -57,7 +60,7 @@ const QuizAccess = () => {
               <tr key={key}>
                 <td className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white">
-                    {entry.quiz}
+                    {entry.quizName}
                   </h5>
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
@@ -66,8 +69,13 @@ const QuizAccess = () => {
                   </p>
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
+                  <p className="text-black dark:text-white">
+                    {entry.score}
+                  </p>
+                </td>
+                <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
-                    <button onClick={() => router.push(`/quiz/${quiz._id}`)} className="hover:text-primary">
+                    <button onClick={() => router.push(`/quiz/${entry.quiz}`)} className="hover:text-primary">
                       <FaEye />
                     </button>
                   </div>

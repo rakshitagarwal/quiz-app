@@ -1,9 +1,9 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import ActiveQuiz from "../../../components/Quiz/ActiveQuiz";
 import { Metadata } from "next";
+// import { getSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
 import { options } from "@/app/api/auth/[...nextauth]/options";
-import { redirect } from "next/navigation";
 
 const getQuizById = async (id: string) => {
   try {
@@ -21,7 +21,7 @@ const getQuizById = async (id: string) => {
   }
 };
 
-const findEntry = async (id: string, userId: string) => {
+const findEntry = async (id: string,createdBy: string, userId: string) => {
   try {
     const res = await fetch("http://localhost:3000/api/test", {
       method: "PUT",
@@ -31,6 +31,7 @@ const findEntry = async (id: string, userId: string) => {
       body: JSON.stringify({
         quiz: id,
         playedBy: userId,
+        createdBy
       }),
     });
 
@@ -50,7 +51,7 @@ const findEntry = async (id: string, userId: string) => {
   }
 };
 
-const addEntry = async (id: string, userId: string) => {
+const addEntry = async (id: string, createdBy: string,quizName : string, userId: string) => {
   try {
     const res = await fetch("http://localhost:3000/api/test", {
       method: "POST",
@@ -59,7 +60,9 @@ const addEntry = async (id: string, userId: string) => {
       },
       body: JSON.stringify({
         quiz: id,
+        quizName,
         playedBy: userId,
+        createdBy,
         score: 0,
         correctResponses: 0,
         incorrectResponses: 0,
@@ -89,20 +92,16 @@ type QuizViewParams = {
 };
 
 export default async function PlayQuiz({ params }: QuizViewParams) {
+  const session = await getServerSession(options);
   const { id } = params;
   const { quiz } = await getQuizById(id);
-  const { title, description, questions } = quiz;
+  const { title, description, questions, createdBy } = quiz;
   let analyticsId;
-  const session = await getServerSession(options);
-//   if (!session) {
-//     redirect(`/signup?callbackUrl=/quiz/${id}`);
-//   }
-
   if (session?.user?.role === "STUDENT") {
-    const entryId = await findEntry(id, session?.user?._id as string);
+    const entryId = await findEntry(id,createdBy, session?.user?._id as string);
 
     if (!entryId) {
-      await addEntry(id, session?.user?._id as string);
+      await addEntry(id, createdBy,title, session?.user?._id as string);
     }
     analyticsId = entryId;
   }
@@ -111,9 +110,9 @@ export default async function PlayQuiz({ params }: QuizViewParams) {
     <DefaultLayout>
       <ActiveQuiz
         quizId={id}
-        userId={session?.user._id}
         entryId={analyticsId}
         title={title}
+        createdBy={createdBy}
         description={description}
         questions={questions}
       />

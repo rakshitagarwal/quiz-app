@@ -3,6 +3,8 @@ import Image from "next/image";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { options } from "../api/auth/[...nextauth]/options";
 
 export const metadata: Metadata = {
   title: "Next.js Profile | TailAdmin - Next.js Dashboard Template",
@@ -10,7 +12,9 @@ export const metadata: Metadata = {
     "This is Next.js Profile page for TailAdmin - Next.js Tailwind CSS Admin Dashboard Template",
 };
 
-const Profile = () => {
+const Profile = async () => {
+  const session =  await getServerSession(options);
+  
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-242.5">
@@ -116,7 +120,7 @@ const Profile = () => {
             </div>
             <div className="mt-4">
               <h3 className="mb-1.5 text-2xl font-semibold text-black dark:text-white">
-                Danish Heilium
+                {session?.user?.name}
               </h3>
               <p className="font-medium">Ui/Ux Designer</p>
               <div className="mx-auto mb-5.5 mt-4.5 grid max-w-94 grid-cols-3 rounded-md border border-stroke py-2.5 shadow-1 dark:border-strokedark dark:bg-[#37404F]">

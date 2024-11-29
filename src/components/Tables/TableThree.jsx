@@ -9,7 +9,6 @@ import { MdDelete, MdModeEditOutline } from "react-icons/md";
 const TableThree = () => {
   const router = useRouter()
   const [quizes, setQuizes] = useState([]);
-  const [isAdmin, setIsAdmin] = useState(false)
 
   const getQuizes = async () => {
     try {
@@ -24,10 +23,6 @@ const TableThree = () => {
 
       if (!res.ok) {
         throw new Error("Failed to fetch quizzes");
-      }
-      if (session) {
-        const loggedUser = session.user
-        if (loggedUser.role === "ADMIN") setIsAdmin(true)
       }
       const { quizes } = await res.json();
       setQuizes(quizes);
@@ -94,8 +89,7 @@ const TableThree = () => {
                     <button onClick={() => router.push(`/quiz/${quiz._id}`)} className="hover:text-primary">
                       <FaEye />
                     </button>
-                    {isAdmin && (
-                  <div className="flex items-center space-x-3.5">
+            
                       <button onClick={() => removeQuiz(quiz._id)} className="hover:text-primary">
                         <MdDelete />
                       </button>
@@ -103,8 +97,8 @@ const TableThree = () => {
                       <button onClick={() => router.push(`/quiz/edit/${quiz._id}`)} className="hover:text-primary">
                         <MdModeEditOutline />
                       </button>
-                    </div>
-                    )}
+                   
+                 
                   </div>
                 </td>
               </tr>

@@ -4,7 +4,7 @@ import { getSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-const ActiveQuiz = ({ quizId, entryId, userId, title, description, questions }) => {  
+const ActiveQuiz = ({ quizId, entryId, createdBy, title, description, questions }) => {  
   const router = useRouter();
   const pathname = usePathname();
   const passPercentage = 60;
@@ -78,7 +78,9 @@ const ActiveQuiz = ({ quizId, entryId, userId, title, description, questions }) 
         body: JSON.stringify({
           id: entryId,
           quiz: quizId,
+          quizName: title,
           playedBy: userSession.user._id,
+          createdBy,
           score: quizResult.score,
           correctResponses: quizResult.correctAnswers,
           incorrectResponses: quizResult.wrongAnswers,
