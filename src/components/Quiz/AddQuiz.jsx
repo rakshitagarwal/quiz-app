@@ -14,11 +14,11 @@ export default function AddQuiz() {
     const [activeTab, setActiveTab] = useState(1);
 
     const [questions, setQuestions] = useState([
-        { question: "", questionType: "MCQ", answers: ["", ""], correctAnswer: "" },
+        { question: "", questionType: "MCQ", answers: ["", "", "", ""], correctAnswer: "" },
     ]);
 
     const handleAddQuestion = () => {
-        setQuestions([...questions, { question: "", questionType: "MCQ", answers: ["", ""], correctAnswer: "" }]);
+        setQuestions([...questions, { question: "", questionType: "MCQ", answers: ["", "", "", ""], correctAnswer: "" }]);
     };
 
     const handleRemoveQuestion = (index) => {
@@ -31,6 +31,9 @@ export default function AddQuiz() {
         if (field === "questionType" && value === "TRUE/FALSE") {
             updatedQuestions[index].answers = ["True", "False"];
             updatedQuestions[index].correctAnswer = "";
+        } else if (field === "questionType" && value === "MCQ") {
+            updatedQuestions[index].answers = ["", "", "", ""];
+            updatedQuestions[index].correctAnswer = "";
         }
         setQuestions(updatedQuestions);
     };
@@ -38,23 +41,6 @@ export default function AddQuiz() {
     const handleAnswerChange = (qIndex, aIndex, value) => {
         const updatedQuestions = [...questions];
         updatedQuestions[qIndex].answers[aIndex] = value;
-        setQuestions(updatedQuestions);
-    };
-
-    const handleAddAnswer = (qIndex) => {
-        const updatedQuestions = [...questions];
-        if (updatedQuestions[qIndex].answers.length < 5) {
-            updatedQuestions[qIndex].answers.push("");
-            setQuestions(updatedQuestions);
-        }
-    };
-
-    const handleRemoveAnswer = (qIndex, aIndex) => {
-        const updatedQuestions = [...questions];
-        updatedQuestions[qIndex].answers = updatedQuestions[qIndex].answers.filter((_, i) => i !== aIndex);
-        if (updatedQuestions[qIndex].correctAnswer === updatedQuestions[qIndex].answers[aIndex]) {
-            updatedQuestions[qIndex].correctAnswer = "";
-        }
         setQuestions(updatedQuestions);
     };
 
@@ -144,7 +130,7 @@ export default function AddQuiz() {
                             <label className="mb-3 block text-sm font-medium text-black dark:text-white">Quiz Duration</label>
                             <input
                                 type="text"
-                                placeholder="Enter quiz title"
+                                placeholder="Enter quiz duration"
                                 value={timer}
                                 onChange={(e) => setTimer(e.target.value)}
                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -204,26 +190,8 @@ export default function AddQuiz() {
                                                 className="flex-grow rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                                                 disabled={question.questionType === "TRUE/FALSE"}
                                             />
-                                            {question.questionType === "MCQ" && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleRemoveAnswer(qIndex, aIndex)}
-                                                    className="text-meta-1"
-                                                >
-                                                    Remove
-                                                </button>
-                                            )}
                                         </div>
                                     ))}
-                                    {question.questionType === "MCQ" && question.answers.length < 5 && (
-                                        <button
-                                            type="button"
-                                            onClick={() => handleAddAnswer(qIndex)}
-                                            className="text-primary"
-                                        >
-                                            Add Choice
-                                        </button>
-                                    )}
                                 </div>
                                 {/* Correct Answer */}
                                 <div className="mb-4.5">
