@@ -9,6 +9,7 @@ const ActiveQuiz = ({ entryId, quiz }) => {
   const router = useRouter();
   const pathname = usePathname();
   const passPercentage = 60;
+  const [isQuizStarted, setIsQuizStarted] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState("");
   const [answerChecked, setAnswerChecked] = useState(false);
@@ -110,26 +111,76 @@ const ActiveQuiz = ({ entryId, quiz }) => {
       <div className="flex flex-col items-center">
         <h1 className="mb-4 mt-5 text-3xl font-bold">{quiz.title}</h1>
         <p className="mb-6 text-lg">{quiz.description}</p>
-        {!showReport && (
-          <Countdown
-            date={quizEndTime}
-            onComplete={() => setShowReport(true)}
-          />
-        )}
+        {!isQuizStarted ? (
+    <button
+      onClick={() => setIsQuizStarted(true)}
+      className="rounded bg-blue-500 px-6 py-3 text-white"
+    >
+      Start Quiz
+    </button>
+  ) : (
+    !showReport && (
+      <Countdown
+        date={quizEndTime}
+        onComplete={() => setShowReport(true)}
+      />
+    )
+  )}
       </div>
-      <div className="container mx-auto mt-5 flex w-[80%]">
-        {/* Sidebar */}
-        {!showReport && (
-          <div className="w-1/4 p-4 ">
-            <div className="rounded-lg bg-gray-100 p-4 shadow-md">
-              <h3 className="mb-3 text-lg font-bold">Navigate to questions</h3>
-              <ul className="grid grid-cols-2 gap-2">
+      <div className="container mx-auto mt-5 flex w-[80%] flex-col items-center">
+        <div className="w-full px-4">
+          {!showReport ? (
+            <>
+              <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+                <div
+                  className="h-2.5 rounded-full bg-blue-600"
+                  style={{ width: `${progressPercentage}%` }}
+                />
+              </div>
+              <div className="rounded-lg bg-white p-6 shadow-lg">
+                <h4 className="mb-4 text-2xl">{question}</h4>
+                <ul className="space-y-3">
+                  {answers.map((answer, idx) => (
+                    <li
+                      key={idx}
+                      onClick={() => onAnswerSelected(answer, idx)}
+                      className={`cursor-pointer rounded p-3 hover:bg-gray-200 
+                  ${selectedAnswerIndex === idx ? "bg-blue-100" : ""}`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedAnswerIndex === idx}
+                        readOnly
+                        className="mr-3"
+                      />
+                      {answer}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-4 flex justify-between">
+                  <button
+                    onClick={handleNextQuestion}
+                    className={`rounded bg-blue-500 px-4 py-2 text-white 
+                          ${!answerChecked
+                        ? "cursor-not-allowed opacity-50"
+                        : ""
+                      }`}
+                    disabled={!answerChecked}
+                  >
+                    {currentQuestionIndex === quiz.questions.length - 1
+                      ? "Submit"
+                      : "Next Question"}
+                  </button>
+                </div>
+              </div>
+              {/* Question Numbers Below */}
+              <div className="mt-6 flex justify-center space-x-2">
                 {quiz.questions.map((_, idx) => (
-                  <li
+                  <div
                     key={idx}
                     onClick={() => setCurrentQuestionIndex(idx)}
-                    className={`cursor-pointer rounded p-2 text-center 
-              ${currentQuestionIndex === idx
+                    className={`cursor-pointer rounded-full px-3 py-2 
+                ${currentQuestionIndex === idx
                         ? "bg-blue-500 text-white"
                         : attemptedQuestions.includes(idx)
                           ? "bg-green-300 hover:bg-green-400"
@@ -137,70 +188,15 @@ const ActiveQuiz = ({ entryId, quiz }) => {
                       }`}
                   >
                     {idx + 1}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        )}
-
-        {/* Main Content */}
-        <div
-          className={`${showReport ? "w-full" : " w-3/4"
-            } px-4 transition-all duration-300`}
-        >
-          <div>
-            {!showReport ? (
-              <>
-                <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
-                  <div
-                    className="h-2.5 rounded-full bg-blue-600"
-                    style={{ width: `${progressPercentage}%` }}
-                  />
-                </div>
-                <div className="rounded-lg bg-white p-6 shadow-lg">
-                  <h4 className="mb-4 text-2xl">{question}</h4>
-                  <ul className="space-y-3">
-                    {answers.map((answer, idx) => (
-                      <li
-                        key={idx}
-                        onClick={() => onAnswerSelected(answer, idx)}
-                        className={`cursor-pointer rounded p-3 hover:bg-gray-200 
-                    ${selectedAnswerIndex === idx ? "bg-blue-100" : ""}`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedAnswerIndex === idx}
-                          readOnly
-                          className="mr-3"
-                        />
-                        {answer}
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-4 flex justify-between">
-                    <div>
-                      <button
-                        onClick={handleNextQuestion}
-                        className={`rounded bg-blue-500 px-4 py-2 text-white 
-                                ${!answerChecked
-                            ? "cursor-not-allowed opacity-50"
-                            : ""
-                          }`}
-                        disabled={!answerChecked}
-                      >
-                        {currentQuestionIndex === quiz.questions.length - 1
-                          ? "Submit"
-                          : "Next Question"}
-                      </button>
-                    </div>
                   </div>
-                </div>
-              </>
-            ) : (
-              <div className="rounded-lg bg-white p-6 shadow-lg">
-                <h3 className="mb-4 text-2xl">Quiz Ended</h3>
-                {quiz.showResult && (<table className="min-w-full table-auto">
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="rounded-lg bg-white p-6 shadow-lg">
+              <h3 className="mb-4 text-2xl">Quiz Ended</h3>
+              {quiz.showResult && (
+                <table className="min-w-full table-auto">
                   <tbody>
                     <tr>
                       <td className="px-4 py-2 font-semibold">
@@ -233,12 +229,13 @@ const ActiveQuiz = ({ entryId, quiz }) => {
                       <td className="px-4 py-2">{status}</td>
                     </tr>
                   </tbody>
-                </table>)}
-              </div>
-            )}
-          </div>
+                </table>
+              )}
+            </div>
+          )}
         </div>
       </div>
+
     </>
   );
 };

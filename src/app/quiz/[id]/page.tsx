@@ -1,7 +1,6 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import ActiveQuiz from "../../../components/Quiz/ActiveQuiz";
 import { Metadata } from "next";
-// import { getSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 
