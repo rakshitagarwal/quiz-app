@@ -3,9 +3,8 @@ import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
 export const metadata: Metadata = {
-  title:
-    "Analytics Dashboard",
-  description: "Analytics Dashboard",
+  title: "Quiz Builder",
+  description: "Quiz Builder",
 };
 
 export default function Home() {

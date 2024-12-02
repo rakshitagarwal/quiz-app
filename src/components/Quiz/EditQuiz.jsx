@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSession } from "next-auth/react";
 import SwitcherThree from "../Switchers/SwitcherThree";
-import { IoMdAddCircleOutline } from "react-icons/io";
 import { IoRemoveCircleOutline } from "react-icons/io5";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 
@@ -51,7 +50,7 @@ export default function EditQuiz({ id, quiz }) {
       updatedQuestions[index].correctAnswer = "";
     }
     setQuizQuestions(updatedQuestions);
-  }; 
+  };
 
   const handleAnswerChange = (qIndex, aIndex, value) => {
     const updatedQuestions = [...quizQuestions];
@@ -183,7 +182,20 @@ export default function EditQuiz({ id, quiz }) {
                   onClick={handleAddQuestion}
                   className="mb-4 flex w-fit justify-center rounded p-2 font-medium text-white hover:bg-opacity-90"
                 >
-                  <IoMdAddCircleOutline size={32} />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={24}
+                    height={24}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke={"grey"}
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
                 </button>
                 <div className="flex">
                   <button
@@ -197,11 +209,10 @@ export default function EditQuiz({ id, quiz }) {
                   <button
                     type="button"
                     onClick={() => handleNavigation("next")}
-                    className={`text-primary ${
-                      currentQuestionIndex === quizQuestions.length - 1
-                        ? "opacity-50"
-                        : ""
-                    }`}
+                    className={`text-primary ${currentQuestionIndex === quizQuestions.length - 1
+                      ? "opacity-50"
+                      : ""
+                      }`}
                     disabled={currentQuestionIndex === quizQuestions.length - 1}
                   >
                     <FaAngleRight size={32} />
@@ -211,7 +222,7 @@ export default function EditQuiz({ id, quiz }) {
             )}
             {quizQuestions.length > 0 && (
               <div
-              key={currentQuestionIndex}
+                key={currentQuestionIndex}
                 className="mb-4 rounded border border-stroke bg-white p-4 dark:border-strokedark dark:bg-boxdark"
               >
                 <button
@@ -224,17 +235,17 @@ export default function EditQuiz({ id, quiz }) {
                 {/* Question fields */}
                 <div className="mb-4.5">
                   <label className="mb-3 block text-sm font-medium text-black dark:text-white dark:border-strokedark dark:bg-boxdar">
-                  Question {currentQuestionIndex + 1}/{quizQuestions.length}
+                    Question {currentQuestionIndex + 1}/{quizQuestions.length}
                   </label>
                   <input
-                        type="text"
-                        placeholder="Enter question text"
-                        value={quizQuestions[currentQuestionIndex].question}
-                        onChange={(e) =>
-                            handleQuestionChange(currentQuestionIndex, "question", e.target.value)
-                        }
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
+                    type="text"
+                    placeholder="Enter question text"
+                    value={quizQuestions[currentQuestionIndex].question}
+                    onChange={(e) =>
+                      handleQuestionChange(currentQuestionIndex, "question", e.target.value)
+                    }
+                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  />
                 </div>
                 {/* Question type */}
                 <div className="mb-4.5">
@@ -242,15 +253,15 @@ export default function EditQuiz({ id, quiz }) {
                     Question Type
                   </label>
                   <select
-                        value={quizQuestions[currentQuestionIndex].questionType}
-                        onChange={(e) =>
-                            handleQuestionChange(currentQuestionIndex, "questionType", e.target.value)
-                        }
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        >
-                        <option value="MCQ">MCQ</option>
-                        <option value="TRUE/FALSE">TRUE/FALSE</option>
-                    </select>
+                    value={quizQuestions[currentQuestionIndex].questionType}
+                    onChange={(e) =>
+                      handleQuestionChange(currentQuestionIndex, "questionType", e.target.value)
+                    }
+                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  >
+                    <option value="MCQ">MCQ</option>
+                    <option value="TRUE/FALSE">TRUE/FALSE</option>
+                  </select>
                 </div>
                 {/* Choices */}
                 <div className="mb-4.5">
@@ -258,18 +269,18 @@ export default function EditQuiz({ id, quiz }) {
                     Choices
                   </label>
                   {quizQuestions[currentQuestionIndex].answers.map((answer, aIndex) => (
-                        <input
-                            key={aIndex}
-                            type="text"
-                            placeholder={`Choice ${aIndex + 1}`}
-                            value={answer}
-                            onChange={(e) =>
-                                handleAnswerChange(currentQuestionIndex, aIndex, e.target.value)
-                            }
-                            className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                            disabled={quizQuestions[currentQuestionIndex].questionType === "TRUE/FALSE"}
-                        />
-                    ))}
+                    <input
+                      key={aIndex}
+                      type="text"
+                      placeholder={`Choice ${aIndex + 1}`}
+                      value={answer}
+                      onChange={(e) =>
+                        handleAnswerChange(currentQuestionIndex, aIndex, e.target.value)
+                      }
+                      className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      disabled={quizQuestions[currentQuestionIndex].questionType === "TRUE/FALSE"}
+                    />
+                  ))}
                 </div>
                 {/* Correct Answer */}
                 <div className="mb-4.5">
@@ -277,27 +288,27 @@ export default function EditQuiz({ id, quiz }) {
                     Correct Answer
                   </label>
                   <select
-                        value={quizQuestions[currentQuestionIndex].correctAnswer}
-                        onChange={(e) =>
-                            handleQuestionChange(
-                                currentQuestionIndex,
-                                "correctAnswer",
-                                e.target.value,
-                            )
-                        }
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        >
-                        <option value="">Select Correct Answer</option>
-                        {quizQuestions[currentQuestionIndex].answers.map((answer, aIndex) => (
-                            <option key={aIndex} value={answer}>
-                                {answer || `Choice ${aIndex + 1}`}
-                            </option>
-                        ))}
-                    </select>
+                    value={quizQuestions[currentQuestionIndex].correctAnswer}
+                    onChange={(e) =>
+                      handleQuestionChange(
+                        currentQuestionIndex,
+                        "correctAnswer",
+                        e.target.value,
+                      )
+                    }
+                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  >
+                    <option value="">Select Correct Answer</option>
+                    {quizQuestions[currentQuestionIndex].answers.map((answer, aIndex) => (
+                      <option key={aIndex} value={answer}>
+                        {answer || `Choice ${aIndex + 1}`}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                </div>
+              </div>
             )}
-       
+
           </>
         )}
         <div className="flex flex-row">
