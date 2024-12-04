@@ -4,6 +4,7 @@ import { getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
+import { FaRegCirclePlay } from "react-icons/fa6";
 
 const QuizAccess = () => {
   const router = useRouter()
@@ -76,7 +77,7 @@ const QuizAccess = () => {
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
                     <button onClick={() => router.push(`/quiz/${entry.quiz}`)} className="hover:text-primary">
-                      <FaEye />
+                    <FaRegCirclePlay />
                     </button>
                   </div>
                 </td>

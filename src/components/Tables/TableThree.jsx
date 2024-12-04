@@ -4,11 +4,13 @@ import { getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
+import { FaRegCirclePlay } from "react-icons/fa6";
 import { MdDelete, MdModeEditOutline } from "react-icons/md";
 
 const TableThree = () => {
   const router = useRouter()
   const [quizes, setQuizes] = useState([]);
+console.log("quizes", quizes);
 
   const getQuizes = async () => {
     try {
@@ -60,8 +62,11 @@ const TableThree = () => {
               <th className="min-w-[150px] px-4 py-4 font-medium text-black dark:text-white">
                 Description
               </th>
+              <th className="min-w-[150px] px-4 py-4 font-medium text-black dark:text-white">
+                Results
+              </th>
               <th className="min-w-[120px] px-4 py-4 font-medium text-black dark:text-white">
-                Total Questions
+                Questions
               </th>
               <th className="px-4 py-4 font-medium text-black dark:text-white">
                 Action
@@ -82,12 +87,15 @@ const TableThree = () => {
                   </p>
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
+                  <p>{quiz.showResult ? "Yes": "No"}</p>
+                </td>
+                <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <p>{quiz.questions.length}</p>
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
                     <button onClick={() => router.push(`/quiz/${quiz._id}`)} className="hover:text-primary">
-                      <FaEye />
+                    <FaRegCirclePlay />
                     </button>
             
                       <button onClick={() => removeQuiz(quiz._id)} className="hover:text-primary">

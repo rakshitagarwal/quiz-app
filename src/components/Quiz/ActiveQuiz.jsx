@@ -12,10 +12,8 @@ const ActiveQuiz = ({ entryId, quiz }) => {
   const [showInstructions, setShowInstructions] = useState(true);
   const [isQuizStarted, setIsQuizStarted] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState("");
   const [answerChecked, setAnswerChecked] = useState(false);
   const [selectedAnswers, setSelectedAnswers] = useState({});
-  const [selectedAnswerIndex, setSelectedAnswerIndex] = useState(null);
   const [userSession, setUserSession] = useState(null);
   const [showReport, setShowReport] = useState(false);
   const [attemptedQuestions, setAttemptedQuestions] = useState([]);
@@ -54,8 +52,6 @@ const ActiveQuiz = ({ entryId, quiz }) => {
       [currentQuestionIndex]: { answer, idx },
     }));
     setAnswerChecked(true);
-    setSelectedAnswer(answer); // Optional, for immediate display purposes
-    setSelectedAnswerIndex(idx);
     if (!attemptedQuestions.includes(currentQuestionIndex)) {
       setAttemptedQuestions((prev) => [...prev, currentQuestionIndex]);
     }
@@ -68,8 +64,6 @@ const ActiveQuiz = ({ entryId, quiz }) => {
       calculateResult();
       setShowReport(true);
     }
-    setSelectedAnswer("");
-    setSelectedAnswerIndex(null);
     setAnswerChecked(false);
   };
 
@@ -131,8 +125,6 @@ const ActiveQuiz = ({ entryId, quiz }) => {
   }, [showReport]);
   
   useEffect(() => {
-    setSelectedAnswer("");
-    setSelectedAnswerIndex(null);
     setAnswerChecked(false);
   }, [currentQuestionIndex]);
 

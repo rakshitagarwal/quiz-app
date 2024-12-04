@@ -19,11 +19,6 @@ const TablesPage = () => {
             Add Quiz
           </button>
         </Link>
-        {/* <Link href={"/quiz/pdf"}>
-          <button className="flex w-fit mt-10 justify-center rounded bg-primary p-2 font-medium text-gray hover:bg-opacity-90">
-            View PDF
-          </button>
-        </Link> */}
       </div>
       <div className="flex flex-col gap-10 mt-4">
         <TableThree />
